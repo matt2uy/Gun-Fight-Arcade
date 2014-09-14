@@ -1,8 +1,7 @@
 ''' 
 todo: 
 - simplify print_playing _field
-- clear screen when refreshing playing field
-- Keep player within boundaries
+- Clear previous player position when refreshing screen
 '''
 import sys
 import tty
@@ -29,16 +28,20 @@ def move_player(player, direction):
 	global player_one_x_location, player_one_y_location
 	if player == 1:
 		if direction == "up":
-			if player_one_y_location != 0:	
+			if player_one_y_location != 1:	
+				playing_field[player_one_y_location][player_one_x_location] = " "
 				player_one_y_location-=1
 		elif direction == "down":
-			if player_one_y_location != 9:
+			if player_one_y_location != len(playing_field)-2:
+				playing_field[player_one_y_location][player_one_x_location] = " "
 				player_one_y_location+=1
 		elif direction == "left":
-			if player_one_x_location != 0:
+			if player_one_x_location != 1:
+				playing_field[player_one_y_location][player_one_x_location] = " "
 				player_one_x_location-=1
 		elif direction == "right":
-			if player_one_x_location != 9:
+			if player_one_x_location != len(playing_field[0])-2:
+				playing_field[player_one_y_location][player_one_x_location] = " "
 				player_one_x_location+=1
 	#elif player == 2:
 def update_playing_field():
