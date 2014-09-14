@@ -1,6 +1,5 @@
 ''' 
 todo: 
-- simplify print_playing _field
 - Clear previous player position when refreshing screen
 '''
 import sys
@@ -10,16 +9,16 @@ import tty
 tty.setcbreak(sys.stdin)
 
 # game variables
-playing_field = [["-","-","-","-","-","-","-","-","-","-"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["|"," "," "," "," "," "," "," "," ","|"],
-				 ["-","-","-","-","-","-","-","-","-","-"]]
+playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+				 ["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"]]
 
 game_over = False
 player_one_y_location = 5
@@ -48,8 +47,10 @@ def update_playing_field():
 	playing_field[player_one_y_location][player_one_x_location] = 'p'
 def print_playing_field():
 	print "x: ", player_one_x_location, "y: ", player_one_y_location
-	for x in range(10):
-		print playing_field[x][0], playing_field[x][1], playing_field[x][2], playing_field[x][3], playing_field[x][4], playing_field[x][5], playing_field[x][6], playing_field[x][7], playing_field[x][8], playing_field[x][9]
+	for x in range(len(playing_field)):
+		for y in range(len(playing_field[0])):
+			print playing_field[x][y],
+		print ""
 def game_loop():
 	print_playing_field() # move down
 	while game_over == False:
