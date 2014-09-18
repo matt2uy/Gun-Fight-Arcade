@@ -22,6 +22,8 @@ playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
 game_over = False
 player_one_y_location = 5
 player_one_x_location = 5
+bullet_x_location = 0
+bullet_y_location = 0
 def read_single_keypress():
     """Waits for a single keypress on stdin.
 
@@ -80,6 +82,10 @@ def move_player(player, direction):
         playing_field[player_one_y_location][player_one_x_location] = " "
         player_one_x_location+=1
   #elif player == 2:
+def shoot(player): 
+  if player == 1:
+    playing_field[player_one_y_location][player_one_x_location+1] = 'o'
+  elif player == 2: pass
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = 'p'
 def print_playing_field():
@@ -114,4 +120,50 @@ def game_loop():
       print_playing_field()
       time.sleep(0.01)
 
-game_loop()
+import termios, fcntl, sys, os, time
+
+def check_for_key_press():
+  fd = sys.stdin.fileno()
+
+  oldterm = termios.tcgetattr(fd)
+  newattr = termios.tcgetattr(fd)
+  newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+  termios.tcsetattr(fd, termios.TCSANOW, newattr)
+
+  oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+  fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+
+  try:
+      while 1:
+          try:
+                print_playing_field() # move down
+                char = ord(sys.stdin.read(1))
+                if char=='\x1b[A':
+                  print "up"
+                elif char == 119:
+                  move_player(1,"up")
+                  print 'w'     
+                elif char == 115:
+                  move_player(1,"down")
+                  print 's'
+                elif char==97:
+                  move_player(1,"left")
+                  print 'a'
+                elif char == 100:
+                  move_player(1,"right")
+                  print 'd'
+                elif char == 102:
+                  shoot(1)
+                  print 'f'
+                else: print char
+                update_playing_field()
+                print_playing_field()
+                time.sleep(0.05)
+          except IOError:
+            update_playing_field()
+            print_playing_field()
+            time.sleep(0.05)
+  finally:
+      termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+      fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+check_for_key_press()
