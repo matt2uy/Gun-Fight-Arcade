@@ -8,56 +8,36 @@ import time
 tty.setcbreak(sys.stdin)
 
 # game variables
-playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-         ["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"]]
+playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
+                 ["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"]]
 
 game_over = False
 player_one_y_location = 5
 player_one_x_location = 5
+
 bullet_x_location = 0
 bullet_y_location = 0
-def read_single_keypress():
-    """Waits for a single keypress on stdin.
+bullet_direction = "Right-Up"
+bullet_active = False
 
-    This is a silly function to call if you need to do it a lot because it has
-    to store stdin's current setup, setup stdin for reading single keystrokes
-    then read the single keystroke then revert stdin back after reading the
-    keystroke.
-
-    Returns the character of the key that was pressed (zero on
-    KeyboardInterrupt which can happen when a signal gets handled)
-
-    """
-    import termios, fcntl, sys, os
-    fd = sys.stdin.fileno()
-    # save old state
-    flags_save = fcntl.fcntl(fd, fcntl.F_GETFL)
-    attrs_save = termios.tcgetattr(fd)
-    # make raw - the way to do this comes from the termios(3) man page.
-    attrs = list(attrs_save) # copy the stored version to update
-    # iflag
-    attrs[0] &= ~(termios.IGNBRK | termios.BRKINT | termios.PARMRK 
-                  | termios.ISTRIP | termios.INLCR | termios. IGNCR 
-                  | termios.ICRNL | termios.IXON )
-    # oflag
-    attrs[1] &= ~termios.OPOST
-    # cflag
-    attrs[2] &= ~(termios.CSIZE | termios. PARENB)
-    attrs[2] |= termios.CS8
-    # lflag
-    attrs[3] &= ~(termios.ECHONL | termios.ECHO | termios.ICANON
-                  | termios.ISIG | termios.IEXTEN)
-    termios.tcsetattr(fd, termios.TCSANOW, attrs)
-    # turn off non-blocking
-    fcntl.fcntl(fd, fcntl.F_SETFL, flags_save & ~os.O_NONBLOCK)
+bullet_loop_count = 0
 
 def move_player(player, direction):
   global player_one_x_location, player_one_y_location
@@ -83,13 +63,48 @@ def move_player(player, direction):
         player_one_x_location+=1
   #elif player == 2:
 def shoot(player): 
-  if player == 1:
-    playing_field[player_one_y_location][player_one_x_location+1] = 'o'
+  global bullet_active, bullet_x_location, bullet_y_location
+  if player == 1 and bullet_active == False:
+    bullet_active = True
+    bullet_x_location = player_one_x_location + 1
+    bullet_y_location = player_one_y_location - 1
   elif player == 2: pass
+  else: 
+    bullet_active = True
+
+def move_bullets(player): 
+  global bullet_loop_count
+  global bullet_direction
+  if bullet_loop_count > 0:
+    bullet_loop_count = 0
+    if player == 1 and bullet_active == True: 
+      global bullet_y_location, bullet_x_location
+      # clear previous bullet 
+      playing_field[bullet_y_location][bullet_x_location] = " "
+      
+      # side boundary
+      if bullet_x_location == len(playing_field):
+        bullet_direction = "Right-Up"
+      elif bullet_x_location == 0: 
+        bullet_direction = "Right-Down"
+
+      if bullet_direction == "Right-Up":
+        bullet_x_location += 1
+        bullet_y_location -= 1
+      elif bullet_direction == "Right-Down":
+        bullet_x_location += 1
+        bullet_y_location += 1
+
+    
+
+
+    elif player == 2: pass
+  else: bullet_loop_count += 1
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = 'p'
+  playing_field[bullet_y_location][bullet_x_location] = 'o'
 def print_playing_field():
-  print "x: ", player_one_x_location, "y: ", player_one_y_location
+  print "x: ", player_one_x_location, "y: ", player_one_y_location, "bullet_active: ", bullet_active 
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
@@ -97,7 +112,6 @@ def print_playing_field():
 def game_loop():
   print_playing_field() # move down
   while game_over == False:
-      read_single_keypress()
       char = ord(sys.stdin.read(1))
       if char=='\x1b[A':
         print "up"
@@ -157,10 +171,12 @@ def check_for_key_press():
                   print 'f'
                 else: print char
                 update_playing_field()
+                move_bullets(1)
                 print_playing_field()
                 time.sleep(0.05)
           except IOError:
             update_playing_field()
+            move_bullets(1)
             print_playing_field()
             time.sleep(0.05)
   finally:
