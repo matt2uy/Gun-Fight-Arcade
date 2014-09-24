@@ -1,11 +1,4 @@
-''' 
-todo: 
-'''
-import sys
-import tty
-import time
-# keyboard input
-tty.setcbreak(sys.stdin)
+import termios, fcntl, sys, os, time, tty
 
 # game variables
 playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"],
@@ -83,9 +76,9 @@ def move_bullets(player):
       playing_field[bullet_y_location][bullet_x_location] = " "
       
       # side boundary
-      if bullet_x_location == len(playing_field):
+      if bullet_x_location == len(playing_field)+1:
         bullet_direction = "Right-Up"
-      elif bullet_x_location == 0: 
+      elif bullet_x_location < 1: 
         bullet_direction = "Right-Down"
 
       if bullet_direction == "Right-Up":
@@ -95,16 +88,13 @@ def move_bullets(player):
         bullet_x_location += 1
         bullet_y_location += 1
 
-    
-
-
     elif player == 2: pass
   else: bullet_loop_count += 1
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = 'p'
   playing_field[bullet_y_location][bullet_x_location] = 'o'
 def print_playing_field():
-  print "x: ", player_one_x_location, "y: ", player_one_y_location, "bullet_active: ", bullet_active 
+  print "x: ", player_one_x_location, "y: ", player_one_y_location, "bullet_active: ", bullet_active, "bullet direction: ", bullet_direction
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
@@ -133,9 +123,6 @@ def game_loop():
       update_playing_field()
       print_playing_field()
       time.sleep(0.01)
-
-import termios, fcntl, sys, os, time
-
 def check_for_key_press():
   fd = sys.stdin.fileno()
 
@@ -182,4 +169,6 @@ def check_for_key_press():
   finally:
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+
+#sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=32, cols=100))
 check_for_key_press()
