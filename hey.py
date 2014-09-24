@@ -68,14 +68,25 @@ def move_bullets(player):
   if bullet_loop_count > 0:
     bullet_loop_count = 0
     if player == 1 and bullet_active == True: 
-      global bullet_y_location, bullet_x_location
+      global bullet_y_location, bullet_x_location, bullet_active
       # clear previous bullet 
       playing_field[bullet_y_location][bullet_x_location] = " "
       
-      # side boundary
-      if bullet_x_location == len(playing_field)+1:
+      # endzone boundary (left and right walls)
+      if bullet_x_location > len(playing_field[0])-3:
+        # deactivate bullet
+        bullet_active = False
+        bullet_direction = "done"
+      
+      elif bullet_x_location < 2:
+        # deactivate bullet
+        bullet_active = False
+        bullet_direction = "done"   
+      
+      # side boundary (top and bottom walls)
+      if bullet_y_location > len(playing_field)-3:
         bullet_direction = "Right-Up"
-      elif bullet_x_location < 1: 
+      elif bullet_y_location < 2: 
         bullet_direction = "Right-Down"
 
       if bullet_direction == "Right-Up":
@@ -167,5 +178,6 @@ def check_for_key_press():
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
-sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=18, cols=66))   
+# Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
+sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=18, cols=66))
 check_for_key_press()
