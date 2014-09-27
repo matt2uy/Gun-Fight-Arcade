@@ -1,5 +1,6 @@
 #todo: shoot() and move_bullets for player 2 (no more global variables, use objects instead)
 
+# bullet_loop_count
 import termios, fcntl, sys, os, time, tty
 # game variables
 # Small
@@ -33,16 +34,35 @@ player_two_bullet_count = 6
 '''
 try a bullet class:
 '''
-class Bullet:
+class player_one_bullet:
   x_location = 0
   y_location = 0
-  direction = ""
+  direction = "Right-Up"
   active = False
 
-bullet_x_location = 0
-bullet_y_location = 0
-bullet_direction = "Right-Up"
-bullet_active = False
+class player_two_bullet:
+  x_location = 0
+  y_location = 0
+  direction = "Left-Up"
+  active = False
+
+# player 1 bullets
+bullet_1 = player_one_bullet
+
+bullet_2 = player_one_bullet
+bullet_3 = player_one_bullet
+bullet_4 = player_one_bullet
+bullet_5 = player_one_bullet
+bullet_6 = player_one_bullet
+
+# player 2 bullets
+bullet_7 = player_two_bullet
+bullet_8 = player_two_bullet
+bullet_9 = player_two_bullet
+bullet_10 = player_two_bullet
+bullet_11 = player_two_bullet
+bullet_12 = player_two_bullet 
+
 
 bullet_loop_count = 0 # ?
 
@@ -68,21 +88,25 @@ def move_player(direction, player_x_location, player_y_location):
       player_x_location+=1
   return player_x_location, player_y_location
 
-def shoot(player): 
-  global bullet_active, bullet_x_location, bullet_y_location
-  if player == 1 and bullet_active == False and player_one_bullet_count > 0:
+def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, player_y_location):
+  if bullet_direction == "Right-Up" and bullet_active == False and bullet_count > 0:
     bullet_active = True
-    bullet_x_location = player_one_x_location + 1
-    bullet_y_location = player_one_y_location - 1
-  elif player == 2: pass 
+    bullet_x_location = player_x_location + 1
+    bullet_y_location = player_y_location - 1
 
-def move_bullets(player): 
+  elif bullet_direction == "Left-Up" and bullet_active == False and bullet_count > 0:
+    bullet_active = True
+    bullet_x_location = player_x_location - 1
+    bullet_y_location = player_y_location - 1
+
+  return bullet_active, bullet_x_location, bullet_y_location
+
+#bullet_x_location, bullet_y_location, bullet_active
+def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active): 
   global bullet_loop_count
-  global bullet_direction
   if bullet_loop_count > 0:
     bullet_loop_count = 0
-    if player == 1 and bullet_active == True: 
-      global bullet_y_location, bullet_x_location, bullet_active
+    if bullet_active == True: 
       # clear previous bullet 
       playing_field[bullet_y_location][bullet_x_location] = " "
       
@@ -90,18 +114,22 @@ def move_bullets(player):
       if bullet_x_location > len(playing_field[0])-2:
         # deactivate bullet
         bullet_active = False
-        bullet_direction = "done"
+        bullet_direction = "none"
       
-      elif bullet_x_location < 2:
+      elif bullet_x_location < 1:
         # deactivate bullet
         bullet_active = False
-        bullet_direction = "done"   
+        bullet_direction = "none"   
       
       # side boundary (top and bottom walls)
-      if bullet_y_location > len(playing_field)-3:
+      if bullet_y_location > len(playing_field)-3 and bullet_direction == "Right-Down":
         bullet_direction = "Right-Up"
-      elif bullet_y_location < 2: 
+      elif bullet_y_location < 2 and bullet_direction == "Right-Up": 
         bullet_direction = "Right-Down"
+      elif bullet_y_location > len(playing_field)-3 and bullet_direction == "Left-Down":
+        bullet_direction = "Left-Up"
+      elif bullet_y_location < 2 and bullet_direction == "Left-Up": 
+        bullet_direction = "Left-Down"
 
       if bullet_direction == "Right-Up":
         bullet_x_location += 1
@@ -109,22 +137,29 @@ def move_bullets(player):
       elif bullet_direction == "Right-Down":
         bullet_x_location += 1
         bullet_y_location += 1
+      elif bullet_direction == "Left-Up":
+        bullet_x_location -= 1
+        bullet_y_location -= 1
+      elif bullet_direction == "Left-Down":
+        bullet_x_location -= 1
+        bullet_y_location += 1
 
-    elif player == 2: pass
   else: bullet_loop_count += 1
+  return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = '1'
   playing_field[player_two_y_location][player_two_x_location] = '2'
-  playing_field[bullet_y_location][bullet_x_location] = 'o'
+  playing_field[bullet_1.y_location][bullet_1.x_location] = 'o'
+  playing_field[bullet_7.y_location][bullet_7.x_location] = 'o'
 def print_playing_field():
-  print "x: ", player_one_x_location, "y: ", player_one_y_location, "bullet_active: ", bullet_active, "bullet direction: ", bullet_direction
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
     print ""
   print "Player 1 bullets left:", player_one_bullet_count
 def check_for_key_press():
-  global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location
+  global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
+  global bullet_x_location, bullet_y_location, player_one_bullet_count, bullet_direction
   fd = sys.stdin.fileno()
 
   oldterm = termios.tcgetattr(fd)
@@ -157,7 +192,7 @@ def check_for_key_press():
                   player_one_x_location, player_one_y_location = move_player("right", player_one_x_location, player_one_y_location)
                   print 'd'
                 elif char == 102:
-                  shoot(1)
+                  bullet_1.active, bullet_1.x_location, bullet_1.y_location = shoot("Right-Up", bullet_1.active, player_one_bullet_count, player_one_x_location, player_one_y_location)
                   print 'f'
 
                 # player 2
@@ -175,15 +210,18 @@ def check_for_key_press():
                   player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
                 elif char == 108:
                   print 'fire'
-                  shoot(1)
+                  bullet_7.active, bullet_7.x_location, bullet_7.y_location = shoot("Right-Up", bullet_7.active, player_two_bullet_count, player_two_x_location, player_two_y_location)
                 else: print char
+                
                 update_playing_field()
-                move_bullets(1)
+                #bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
+                bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
                 print_playing_field()
                 time.sleep(0.05)
           except IOError:
             update_playing_field()
-            move_bullets(1)
+            #bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
+            bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
             print_playing_field()
             time.sleep(0.05)
   finally:
@@ -191,5 +229,5 @@ def check_for_key_press():
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 # Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
-sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=20, cols=66))
+sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))
 check_for_key_press()
