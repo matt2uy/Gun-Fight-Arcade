@@ -104,48 +104,46 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
 
 #bullet_x_location, bullet_y_location, bullet_active
 def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active): 
-  #global bullet_loop_count
-  if 1==1:
-    #bullet_loop_count = 0
-    if bullet_active == True: 
-      # clear previous bullet 
-      playing_field[bullet_y_location][bullet_x_location] = " "
+  if bullet_active == True: 
+    # clear previous bullet 
+    playing_field[bullet_y_location][bullet_x_location] = " "
       
-      # endzone boundary (left and right walls)
-      if bullet_x_location > len(playing_field[0])-2:
-        # deactivate bullet
-        bullet_active = False
-        bullet_direction = "none"
+    ### Hitting a boundary: ###
+    # endzone boundary (left and right walls)
+    if bullet_x_location > len(playing_field[0])-2:
+      # deactivate bullet
+      bullet_active = False
+      bullet_direction = "none"
       
-      elif bullet_x_location < 1:
-        # deactivate bullet
-        bullet_active = False
-        bullet_direction = "none"   
+    elif bullet_x_location < 1:
+      # deactivate bullet
+      bullet_active = False
+      bullet_direction = "none"   
       
-      # side boundary (top and bottom walls)
-      if bullet_y_location > len(playing_field)-3 and bullet_direction == "Right-Down":
-        bullet_direction = "Right-Up"
-      elif bullet_y_location < 2 and bullet_direction == "Right-Up": 
-        bullet_direction = "Right-Down"
-      elif bullet_y_location > len(playing_field)-3 and bullet_direction == "Left-Down":
-        bullet_direction = "Left-Up"
-      elif bullet_y_location < 2 and bullet_direction == "Left-Up": 
-        bullet_direction = "Left-Down"
+    # side boundary (top and bottom walls)
+    if bullet_y_location > len(playing_field)-3 and bullet_direction == "Right-Down":
+      bullet_direction = "Right-Up"
+    elif bullet_y_location < 2 and bullet_direction == "Right-Up": 
+      bullet_direction = "Right-Down"
+    elif bullet_y_location > len(playing_field)-3 and bullet_direction == "Left-Down":
+      bullet_direction = "Left-Up"
+    elif bullet_y_location < 2 and bullet_direction == "Left-Up": 
+      bullet_direction = "Left-Down"
 
-      if bullet_direction == "Right-Up":
-        bullet_x_location += 1
-        bullet_y_location -= 1
-      elif bullet_direction == "Right-Down":
-        bullet_x_location += 1
-        bullet_y_location += 1
-      elif bullet_direction == "Left-Up":
-        bullet_x_location -= 1
-        bullet_y_location -= 1
-      elif bullet_direction == "Left-Down":
-        bullet_x_location -= 1
-        bullet_y_location += 1
+    ### Moving the bullet ###
+    if bullet_direction == "Right-Up":
+      bullet_x_location += 1
+      bullet_y_location -= 1
+    elif bullet_direction == "Right-Down":
+      bullet_x_location += 1
+      bullet_y_location += 1
+    elif bullet_direction == "Left-Up":
+      bullet_x_location -= 1
+      bullet_y_location -= 1
+    elif bullet_direction == "Left-Down":
+      bullet_x_location -= 1
+      bullet_y_location += 1
 
-  #else: bullet_loop_count += 1
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = '1'
@@ -214,21 +212,18 @@ def check_for_key_press():
                   bullet_7.active, bullet_7.x_location, bullet_7.y_location = shoot("Left-Up", bullet_7.active, player_two_bullet_count, player_two_x_location, player_two_y_location)
                 else: print char
                 
-                update_playing_field()
                 
                 # can't do both simultaneously
                 bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
                 bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
-                
+                update_playing_field()
                 print_playing_field()
                 time.sleep(0.05)
           except IOError:
-            update_playing_field()
-            
             # can't do both simultaneously
             bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
             bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
-            
+            update_playing_field()
             print_playing_field()
             time.sleep(0.05)
   finally:
