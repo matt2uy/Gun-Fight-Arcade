@@ -1,8 +1,8 @@
-#todo: shoot() and move_bullets for player 2 (no more global variables, use objects instead)
-
-# bullet_loop_count
+# check for hit
+# multiple bullets
+# obstacles
 import termios, fcntl, sys, os, time, tty
-# game variables
+### game variables ###
 # Small
 playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
@@ -26,10 +26,12 @@ game_over = False
 player_one_x_location = 4
 player_one_y_location = 7
 player_one_bullet_count = 6
+player_one_score = 0
 
 player_two_x_location = len(playing_field[0]) - 5
 player_two_y_location = 7
 player_two_bullet_count = 6
+player_two_score = 0
 
 '''
 try a bullet class:
@@ -102,7 +104,6 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
   elif bullet_active == True: pass    # should not happen, because the next bullet should be up
   return bullet_active, bullet_x_location, bullet_y_location
 
-#bullet_x_location, bullet_y_location, bullet_active
 def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active): 
   if bullet_active == True: 
     # clear previous bullet 
@@ -145,20 +146,33 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
       bullet_y_location += 1
 
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
+
+def check_for_hit():
+  global player_one_score, player_two_score, bullet_1, bullet_7
+  if player_one_x_location == bullet_7.x_location and player_one_y_location == bullet_7.y_location and bullet_7.active == True:
+        player_two_score += 1
+        bullet_7.active = False
+        
+  if player_two_x_location == bullet_1.x_location and player_two_y_location == bullet_1.y_location and bullet_1.active == True:
+    player_one_score += 1
+    bullet_1.active = False
+
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = '1'
   playing_field[player_two_y_location][player_two_x_location] = '2'
   playing_field[bullet_1.y_location][bullet_1.x_location] = 'o'
   playing_field[bullet_7.y_location][bullet_7.x_location] = 'o'
 def print_playing_field():
+  print "bullet 7 active: ", bullet_7.active, "bullet 1 active: ", bullet_1.active
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
     print ""
-  print "Player 1 bullets left:", player_one_bullet_count
+  print "Player 1 bullets left:", player_one_bullet_count, "P1 score: ", player_one_score, "P2 score: ", player_two_score
+
 def check_for_key_press():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
-  global bullet_x_location, bullet_y_location, player_one_bullet_count, bullet_direction
+  global bullet_x_location, bullet_y_location, player_one_bullet_count, bullet_direction, player_two_score, player_one_score
   fd = sys.stdin.fileno()
 
   oldterm = termios.tcgetattr(fd)
@@ -170,62 +184,58 @@ def check_for_key_press():
   fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
   try:
-      while 1:
-          try:
-                print_playing_field() # move down
-                char = ord(sys.stdin.read(1))
-                
-                # player 1
-                if char=='\x1b[A':
-                  print "up"
-                elif char == 119:
-                  player_one_x_location, player_one_y_location = move_player("up", player_one_x_location, player_one_y_location)
-                  print 'w'     
-                elif char == 115:
-                  player_one_x_location, player_one_y_location = move_player("down", player_one_x_location, player_one_y_location)
-                  print 's'
-                elif char==97:
-                  player_one_x_location, player_one_y_location = move_player("left", player_one_x_location, player_one_y_location)
-                  print 'a'
-                elif char == 100:
-                  player_one_x_location, player_one_y_location = move_player("right", player_one_x_location, player_one_y_location)
-                  print 'd'
-                elif char == 102:
-                  bullet_1.active, bullet_1.x_location, bullet_1.y_location = shoot("Right-Up", bullet_1.active, player_one_bullet_count, player_one_x_location, player_one_y_location)
-                  print 'f'
+    while 1:
+      # check for keypress. If there isn't any, don't check for which key pressed and do a screen refresh.
+      try:
+        char = ord(sys.stdin.read(1))
 
-                # player 2
-                elif char == 91:
-                  print 'up'
-                  player_two_x_location, player_two_y_location = move_player("up", player_two_x_location, player_two_y_location)
-                elif char == 39:
-                  print 'down'
-                  player_two_x_location, player_two_y_location = move_player("down", player_two_x_location, player_two_y_location)
-                elif char == 59:
-                  print 'left'
-                  player_two_x_location, player_two_y_location = move_player("left", player_two_x_location, player_two_y_location)
-                elif char == 92:
-                  print 'right'
-                  player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
-                elif char == 108:
-                  print 'fire'
-                  bullet_7.active, bullet_7.x_location, bullet_7.y_location = shoot("Left-Up", bullet_7.active, player_two_bullet_count, player_two_x_location, player_two_y_location)
-                else: print char
+        # player 1
+        if char=='\x1b[A':
+          print "up"
+        elif char == 119:
+          player_one_x_location, player_one_y_location = move_player("up", player_one_x_location, player_one_y_location)
+          print 'w'     
+        elif char == 115:
+          player_one_x_location, player_one_y_location = move_player("down", player_one_x_location, player_one_y_location)
+          print 's'
+        elif char==97:
+          player_one_x_location, player_one_y_location = move_player("left", player_one_x_location, player_one_y_location)
+          print 'a'
+        elif char == 100:
+          player_one_x_location, player_one_y_location = move_player("right", player_one_x_location, player_one_y_location)
+          print 'd'
+        elif char == 102:
+          bullet_1.active, bullet_1.x_location, bullet_1.y_location = shoot("Right-Up", bullet_1.active, player_one_bullet_count, player_one_x_location, player_one_y_location)
+          print 'f'
+
+        # player 2
+        elif char == 91:
+          print 'up'
+          player_two_x_location, player_two_y_location = move_player("up", player_two_x_location, player_two_y_location)
+        elif char == 39:
+          print 'down'
+          player_two_x_location, player_two_y_location = move_player("down", player_two_x_location, player_two_y_location)
+        elif char == 59:
+          print 'left'
+          player_two_x_location, player_two_y_location = move_player("left", player_two_x_location, player_two_y_location)
+        elif char == 92:
+          print 'right'
+          player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
+        elif char == 108:
+          print 'fire'
+          bullet_7.active, bullet_7.x_location, bullet_7.y_location = shoot("Left-Up", bullet_7.active, player_two_bullet_count, player_two_x_location, player_two_y_location)
+        else: print char
                 
-                
-                # can't do both simultaneously
-                bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
-                bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
-                update_playing_field()
-                print_playing_field()
-                time.sleep(0.05)
-          except IOError:
-            # can't do both simultaneously
-            bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
-            bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
-            update_playing_field()
-            print_playing_field()
-            time.sleep(0.05)
+      except IOError: pass
+      
+      check_for_hit()
+
+      bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
+      bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
+
+      update_playing_field()
+      print_playing_field()
+      time.sleep(0.05)
   finally:
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
