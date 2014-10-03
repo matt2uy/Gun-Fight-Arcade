@@ -33,40 +33,16 @@ player_two_y_location = 7
 player_two_bullet_count = 6
 player_two_score = 0
 
-'''
-try a bullet class:
-'''
-class player_one_bullet:
-  x_location = 0
-  y_location = 0
-  direction = "Right-Up"
-  active = False
+# bullet data for each player. Each element is the bullet # for each player (6 bullets per person)
+p1_bullet_x_location = [0, 0, 0, 0, 0, 0]
+p1_bullet_y_location = [0, 0, 0, 0, 0, 0]
+p1_bullet_direction = ["Right-Up", "Right-Up", "Right-Up", "Right-Up", "Right-Up", "Right-Up"]
+p1_bullet_active = [False, False, False, False, False, False]
 
-class player_two_bullet:
-  x_location = 0
-  y_location = 0
-  direction = "Left-Up"
-  active = False
-
-# player 1 bullets
-bullet_1 = player_one_bullet
-
-bullet_2 = player_one_bullet
-bullet_3 = player_one_bullet
-bullet_4 = player_one_bullet
-bullet_5 = player_one_bullet
-bullet_6 = player_one_bullet
-
-# player 2 bullets
-bullet_7 = player_two_bullet
-bullet_8 = player_two_bullet
-bullet_9 = player_two_bullet
-bullet_10 = player_two_bullet
-bullet_11 = player_two_bullet
-bullet_12 = player_two_bullet 
-
-
-bullet_loop_count = 0 # ?
+p2_bullet_x_location = [0, 0, 0, 0, 0, 0]
+p2_bullet_y_location = [0, 0, 0, 0, 0, 0]
+p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
+p2_bullet_active = [False, False, False, False, False, False]
 
 def move_player(direction, player_x_location, player_y_location):
   if direction == "up":
@@ -147,23 +123,24 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
 
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 
-def check_for_hit():
-  global player_one_score, player_two_score, bullet_1, bullet_7
-  if player_one_x_location == bullet_7.x_location and player_one_y_location == bullet_7.y_location and bullet_7.active == True:
-        player_two_score += 1
-        bullet_7.active = False
-        
-  if player_two_x_location == bullet_1.x_location and player_two_y_location == bullet_1.y_location and bullet_1.active == True:
+def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_bullet_y_location, p2_bullet_x_location, p2_bullet_y_location, p1_bullet_active, p2_bullet_active):
+  if player_two_x_location == p1_bullet_x_location and player_two_y_location == p1_bullet_y_location and p1_bullet_active == True:
     player_one_score += 1
-    bullet_1.active = False
+    p1_bullet_active = False
+
+  if player_one_x_location == p2_bullet_x_location and player_one_y_location == p2_bullet_y_location and p2_bullet_active == True:
+        player_two_score += 1
+        p2_bullet_active = False
+
+  return player_one_score, player_two_score, p1_bullet_active, p2_bullet_active
 
 def update_playing_field():
   playing_field[player_one_y_location][player_one_x_location] = '1'
   playing_field[player_two_y_location][player_two_x_location] = '2'
-  playing_field[bullet_1.y_location][bullet_1.x_location] = 'o'
-  playing_field[bullet_7.y_location][bullet_7.x_location] = 'o'
+  playing_field[p1_bullet_y_location[0]][p1_bullet_x_location[0]] = 'o'
+  playing_field[p2_bullet_y_location[0]][p2_bullet_x_location[0]] = 'o'
 def print_playing_field():
-  print "bullet 7 active: ", bullet_7.active, "bullet 1 active: ", bullet_1.active
+  print "bullet 2 active: ", p2_bullet_active[0], "bullet 1 active: ", p1_bullet_active[0]
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
@@ -173,6 +150,11 @@ def print_playing_field():
 def check_for_key_press():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
   global bullet_x_location, bullet_y_location, player_one_bullet_count, bullet_direction, player_two_score, player_one_score
+  
+  global p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active
+  global p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active 
+
+
   fd = sys.stdin.fileno()
 
   oldterm = termios.tcgetattr(fd)
@@ -204,8 +186,8 @@ def check_for_key_press():
         elif char == 100:
           player_one_x_location, player_one_y_location = move_player("right", player_one_x_location, player_one_y_location)
           print 'd'
-        elif char == 102:
-          bullet_1.active, bullet_1.x_location, bullet_1.y_location = shoot("Right-Up", bullet_1.active, player_one_bullet_count, player_one_x_location, player_one_y_location)
+        elif char == 102:                                                                       
+          p1_bullet_active[0], p1_bullet_x_location[0], p1_bullet_y_location[0] = shoot("Right-Up", p1_bullet_active[0], player_one_bullet_count, player_one_x_location, player_one_y_location)
           print 'f'
 
         # player 2
@@ -223,15 +205,14 @@ def check_for_key_press():
           player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
         elif char == 108:
           print 'fire'
-          bullet_7.active, bullet_7.x_location, bullet_7.y_location = shoot("Left-Up", bullet_7.active, player_two_bullet_count, player_two_x_location, player_two_y_location)
+          p2_bullet_active[0], p2_bullet_x_location[0], p2_bullet_y_location[0] = shoot("Left-Up", p2_bullet_active[0], player_two_bullet_count, player_two_x_location, player_two_y_location)
         else: print char
                 
       except IOError: pass
-      
-      check_for_hit()
-
-      bullet_1.direction, bullet_1.y_location, bullet_1.x_location, bullet_1.active = move_bullets(bullet_1.direction, bullet_1.x_location, bullet_1.y_location, bullet_1.active)
-      bullet_7.direction, bullet_7.y_location, bullet_7.x_location, bullet_7.active = move_bullets(bullet_7.direction, bullet_7.x_location, bullet_7.y_location, bullet_7.active)
+      #player_one_score, player_two_score, p1_bullet_active[x], p2_bullet_active[x] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[x], p1_bullet_y_location[x], p2_bullet_x_location[x], p2_bullet_y_location[x], p1_bullet_active[x], p2_bullet_active[x])
+      player_one_score, player_two_score, p1_bullet_active[0], p2_bullet_active[0] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[0], p1_bullet_y_location[0], p2_bullet_x_location[0], p2_bullet_y_location[0], p1_bullet_active[0], p2_bullet_active[0])                                                                                                    
+      p1_bullet_direction[0], p1_bullet_y_location[0], p1_bullet_x_location[0], p1_bullet_active[0] = move_bullets(p1_bullet_direction[0], p1_bullet_x_location[0], p1_bullet_y_location[0], p1_bullet_active[0])
+      p2_bullet_direction[0], p2_bullet_y_location[0], p2_bullet_x_location[0], p2_bullet_active[0] = move_bullets(p2_bullet_direction[0], p2_bullet_x_location[0], p2_bullet_y_location[0], p2_bullet_active[0])
 
       update_playing_field()
       print_playing_field()
