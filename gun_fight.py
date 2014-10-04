@@ -191,7 +191,7 @@ def update_playing_field():
 
 
 def print_playing_field():
-  print "bullet 2 active: ", p2_bullet_active[p2_bullet_count], "bullet 1 active: ", p1_bullet_active[p1_bullet_count]
+  print "bullet 2 active: ", p2_bullet_active[p2_bullet_count], "x:", p1_bullet_x_location[3], "y:", p1_bullet_y_location[3]
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
@@ -261,11 +261,28 @@ def check_for_key_press():
             p2_bullet_active[p2_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p2_bullet_count = shoot("Left-Up", p2_bullet_active[p2_bullet_count], p2_bullet_count, player_two_x_location, player_two_y_location)
         else: print char
                 
+      
       except IOError: pass
+
+      # return one object/dictionary instead of these long lines here:
+
       #player_one_score, player_two_score, p1_bullet_active[x], p2_bullet_active[x] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[x], p1_bullet_y_location[x], p2_bullet_x_location[x], p2_bullet_y_location[x], p1_bullet_active[x], p2_bullet_active[x])
       player_one_score, player_two_score, p1_bullet_active[p1_bullet_count], p2_bullet_active[p2_bullet_count] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[p1_bullet_count], p1_bullet_y_location[p1_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p1_bullet_active[p1_bullet_count], p2_bullet_active[p2_bullet_count])                                                                                                    
-      p1_bullet_direction[p2_bullet_count], p1_bullet_y_location[p1_bullet_count], p1_bullet_x_location[p1_bullet_count], p1_bullet_active[p1_bullet_count] = move_bullets(p1_bullet_direction[p1_bullet_count], p1_bullet_x_location[p1_bullet_count], p1_bullet_y_location[p1_bullet_count], p1_bullet_active[p1_bullet_count])
-      p2_bullet_direction[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_active[p2_bullet_count] = move_bullets(p2_bullet_direction[p2_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p2_bullet_active[p2_bullet_count])
+      
+      p1_bullet_direction[0], p1_bullet_y_location[0], p1_bullet_x_location[0], p1_bullet_active[0] = move_bullets(p1_bullet_direction[0], p1_bullet_x_location[0], p1_bullet_y_location[0], p1_bullet_active[0])
+      p1_bullet_direction[1], p1_bullet_y_location[1], p1_bullet_x_location[1], p1_bullet_active[1] = move_bullets(p1_bullet_direction[1], p1_bullet_x_location[1], p1_bullet_y_location[1], p1_bullet_active[1])
+      p1_bullet_direction[2], p1_bullet_y_location[2], p1_bullet_x_location[2], p1_bullet_active[2] = move_bullets(p1_bullet_direction[2], p1_bullet_x_location[2], p1_bullet_y_location[2], p1_bullet_active[2])
+      p1_bullet_direction[3], p1_bullet_y_location[3], p1_bullet_x_location[3], p1_bullet_active[3] = move_bullets(p1_bullet_direction[3], p1_bullet_x_location[3], p1_bullet_y_location[3], p1_bullet_active[3])
+      p1_bullet_direction[4], p1_bullet_y_location[4], p1_bullet_x_location[4], p1_bullet_active[4] = move_bullets(p1_bullet_direction[4], p1_bullet_x_location[4], p1_bullet_y_location[4], p1_bullet_active[4])
+      p1_bullet_direction[5], p1_bullet_y_location[5], p1_bullet_x_location[5], p1_bullet_active[5] = move_bullets(p1_bullet_direction[5], p1_bullet_x_location[5], p1_bullet_y_location[5], p1_bullet_active[5])
+      
+      p2_bullet_direction[0], p2_bullet_y_location[0], p2_bullet_x_location[0], p2_bullet_active[0] = move_bullets(p2_bullet_direction[0], p2_bullet_x_location[0], p2_bullet_y_location[0], p2_bullet_active[0])
+      p2_bullet_direction[1], p2_bullet_y_location[1], p2_bullet_x_location[1], p2_bullet_active[1] = move_bullets(p2_bullet_direction[1], p2_bullet_x_location[1], p2_bullet_y_location[1], p2_bullet_active[1])
+      p2_bullet_direction[2], p2_bullet_y_location[2], p2_bullet_x_location[2], p2_bullet_active[2] = move_bullets(p2_bullet_direction[2], p2_bullet_x_location[2], p2_bullet_y_location[2], p2_bullet_active[2])
+      p2_bullet_direction[3], p2_bullet_y_location[3], p2_bullet_x_location[3], p2_bullet_active[3] = move_bullets(p2_bullet_direction[3], p2_bullet_x_location[3], p2_bullet_y_location[3], p2_bullet_active[3])
+      p2_bullet_direction[4], p2_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_active[4] = move_bullets(p2_bullet_direction[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p2_bullet_active[4])
+      p2_bullet_direction[5], p2_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_active[5] = move_bullets(p2_bullet_direction[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p2_bullet_active[5])
+      
 
       update_playing_field()
       print_playing_field()
