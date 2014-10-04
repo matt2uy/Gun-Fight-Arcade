@@ -8,10 +8,10 @@
 
 
 
-######################     Last commit: Convert all of the bullet objects to arrays, 
-######################                  in order to iterate through multiple bullets later
+######################     Last commit: Multiple bullets per player by iterating through them (still buggy)
+              
 
-######################     Next: Multiple bullets per player by iterating through them
+######################     Next: fix bugs with multiple bullets (bug = only does last bullet, doesn't move the first 5)
 
 
 
@@ -60,12 +60,12 @@ game_over = False
 
 player_one_x_location = 4
 player_one_y_location = 7
-p1_bullet_count = -1 # -1 because in shoot(), bullet_count adds one to itself (0+1 = 1, so to get to element 0, -1+1 = 0)
+p1_bullet_count = 5 # -1 because in shoot(), bullet_count adds one to itself (0+1 = 1, so to get to element 0, -1+1 = 0)
 player_one_score = 0
 
 player_two_x_location = len(playing_field[0]) - 5
 player_two_y_location = 7
-p2_bullet_count = -1 # -1 because in shoot(), bullet_count adds one to itself (0+1 = 1, so to get to element 0, -1+1 = 0)
+p2_bullet_count = 5 # -1 because in shoot(), bullet_count adds one to itself (0+1 = 1, so to get to element 0, -1+1 = 0)
 player_two_score = 0
 
 # bullet data for each player. Each element is the bullet # for each player (6 bullets per person)
@@ -102,8 +102,8 @@ def move_player(direction, player_x_location, player_y_location):
   return player_x_location, player_y_location
 
 def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, player_y_location):
-  if bullet_count < 6:
-    bullet_count+=1
+  if bullet_count >= 0:
+    bullet_count-=1
     if bullet_direction == "Right-Up" and bullet_active == False:
       bullet_active = True
       bullet_x_location = player_x_location + 1
@@ -113,10 +113,7 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
       bullet_active = True
       bullet_x_location = player_x_location - 1
       bullet_y_location = player_y_location - 1
-  
-  else: pass
   return bullet_active, bullet_x_location, bullet_y_location, bullet_count
-
 def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active): 
   if bullet_active == True: 
     # clear previous bullet 
@@ -199,7 +196,7 @@ def print_playing_field():
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
     print ""
-  print "Player 1 bullets left:", p1_bullet_count, "P1 score: ", player_one_score, "P2 score: ", player_two_score
+  print "Player 1 bullets left:", p1_bullet_count+1, "P1 score: ", player_one_score, "P2 score: ", player_two_score
 
 def check_for_key_press():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
@@ -240,8 +237,9 @@ def check_for_key_press():
         elif char == 100:
           player_one_x_location, player_one_y_location = move_player("right", player_one_x_location, player_one_y_location)
           print 'd'
-        elif char == 102:                                                                       
-          p1_bullet_active[p1_bullet_count], p1_bullet_x_location[p1_bullet_count], p1_bullet_y_location[p1_bullet_count], p1_bullet_count = shoot("Right-Up", p1_bullet_active[p1_bullet_count], p1_bullet_count, player_one_x_location, player_one_y_location)
+        elif char == 102:   
+          if p1_bullet_count > -1:                                                                    
+            p1_bullet_active[p1_bullet_count], p1_bullet_x_location[p1_bullet_count], p1_bullet_y_location[p1_bullet_count], p1_bullet_count = shoot("Right-Up", p1_bullet_active[p1_bullet_count], p1_bullet_count, player_one_x_location, player_one_y_location)
           print 'f'
 
         # player 2
@@ -259,7 +257,8 @@ def check_for_key_press():
           player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
         elif char == 108:
           print 'fire'
-          p2_bullet_active[p2_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p2_bullet_count = shoot("Left-Up", p2_bullet_active[p2_bullet_count], p2_bullet_count, player_two_x_location, player_two_y_location)
+          if p2_bullet_count > -1:   
+            p2_bullet_active[p2_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p2_bullet_count = shoot("Left-Up", p2_bullet_active[p2_bullet_count], p2_bullet_count, player_two_x_location, player_two_y_location)
         else: print char
                 
       except IOError: pass
