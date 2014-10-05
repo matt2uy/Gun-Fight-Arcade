@@ -39,7 +39,7 @@
 import termios, fcntl, sys, os, time, tty
 ### game variables ###
 # Small
-playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"],
+playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","\\"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
@@ -54,7 +54,7 @@ playing_field = [["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
-                 ["-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"]]
+                 ["\\","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","/"]]
 
 game_over = False
 
@@ -190,33 +190,59 @@ def update_playing_field():
   playing_field[p2_bullet_y_location[5]][p2_bullet_x_location[5]] = 'o'
 
 def start_menu():
-  print "bullet 2 active: ", p2_bullet_active[p2_bullet_count], "x:", p1_bullet_x_location[3], "y:", p1_bullet_y_location[3]
+  p1_bullet_string = ""
+  for bullet in range(p1_bullet_count+1):
+    p1_bullet_string += "|"
+
+  p2_bullet_string = ""
+  for bullet in range(p2_bullet_count+1):
+    p2_bullet_string += "|"
+
+  print "        Score:", player_one_score, "                            Score: ", player_two_score
   for x in range(len(playing_field)):
     if x == 2:
-      print "|    Player One                                 Player Two    |"
+      print "|       Player One                           Player Two       |"
     elif x == 3:
-      print "|    ----------                                 ----------    |"
+      print "|       ----------                           ----------       |"
     elif x == 4:
-      print "|      W - Up                                     [ = Up      |"
-    elif x == 7:
+      print "|         W - Up                               [ = Up         |"
+    elif x == 6:
+      print "|   A - Left   D - Right               ; = Left   \ = Right   |"
+    elif x == 8:
+      print "|         S - Down                            '' = Down       |"
+    elif x == 12:
       print "|                   Press enter to begin...                   |"
     else:
       for y in range(len(playing_field[0])):
         print playing_field[x][y],
       print ""
-  print "Player 1 bullets left:", p1_bullet_count+1, "P1 score: ", player_one_score, "P2 score: ", player_two_score
+  print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
   # wait for enter to be pressed
   enter_key_pressed = raw_input()
     
 
 def print_playing_field():
-  print "bullet 2 active: ", p2_bullet_active[p2_bullet_count], "x:", p1_bullet_x_location[3], "y:", p1_bullet_y_location[3]
+  p1_bullet_string = ""
+  for bullet in range(p1_bullet_count+1):
+    p1_bullet_string += "|"
+  # keep the length of p1_bullet_string equal to 6, so p2_bullet_string doesn't change position in the print line below
+  while len(p1_bullet_string) < 6:
+    p1_bullet_string += " "
+
+  p2_bullet_string = ""
+  for bullet in range(p2_bullet_count+1):
+    p2_bullet_string += "|"
+  # keep the length of p1_bullet_string equal to 6, so p2_bullet_string doesn't change position in the print line below
+  while len(p1_bullet_string) < 6:
+    p1_bullet_string += " "
+    
+  print "        Score:", player_one_score, "                            Score: ", player_two_score
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
     print ""
-  print "Player 1 bullets left:", p1_bullet_count+1, "P1 score: ", player_one_score, "P2 score: ", player_two_score
+  print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
 def check_for_key_press():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
