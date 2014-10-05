@@ -8,10 +8,10 @@
 
 
 
-######################  Done: fix bugs with multiple bullets
+######################  Done: check for hit for all bullets
               
 
-######################  Next: check for hit() for all bullets
+######################  Next: fix player refresh bug
 
 
 
@@ -189,6 +189,26 @@ def update_playing_field():
   playing_field[p1_bullet_y_location[5]][p1_bullet_x_location[5]] = 'o'
   playing_field[p2_bullet_y_location[5]][p2_bullet_x_location[5]] = 'o'
 
+def start_menu():
+  print "bullet 2 active: ", p2_bullet_active[p2_bullet_count], "x:", p1_bullet_x_location[3], "y:", p1_bullet_y_location[3]
+  for x in range(len(playing_field)):
+    if x == 2:
+      print "|    Player One                                 Player Two    |"
+    elif x == 3:
+      print "|    ----------                                 ----------    |"
+    elif x == 4:
+      print "|      W - Up                                     [ = Up      |"
+    elif x == 7:
+      print "|                   Press enter to begin...                   |"
+    else:
+      for y in range(len(playing_field[0])):
+        print playing_field[x][y],
+      print ""
+  print "Player 1 bullets left:", p1_bullet_count+1, "P1 score: ", player_one_score, "P2 score: ", player_two_score
+
+  # wait for enter to be pressed
+  enter_key_pressed = raw_input()
+    
 
 def print_playing_field():
   print "bullet 2 active: ", p2_bullet_active[p2_bullet_count], "x:", p1_bullet_x_location[3], "y:", p1_bullet_y_location[3]
@@ -299,4 +319,5 @@ def check_for_key_press():
 
 # Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
 sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))
+start_menu()
 check_for_key_press()
