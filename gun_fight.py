@@ -8,10 +8,11 @@
 
 
 
-######################  Done: check for hit for all bullets
+######################  Done: Countdown time and break after a score
               
 
-######################  Next: fix player refresh bug
+######################  Next: after score: reset bullets, locations. Clear playing field.
+###################### Later: actual end of game - timer done
 
 
 
@@ -57,6 +58,8 @@ playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
                  ["\\","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","/"]]
 
 game_over = False
+game_time_left = 99
+second_interval = 0
 
 player_one_x_location = 4
 player_one_y_location = 7
@@ -169,8 +172,11 @@ def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_b
   return player_one_score, player_two_score, p1_bullet_active, p2_bullet_active
 
 def update_playing_field():
+  # print both players
   playing_field[player_one_y_location][player_one_x_location] = '1'
   playing_field[player_two_y_location][player_two_x_location] = '2'
+
+  # print 6 bullets per person * 2
   playing_field[p1_bullet_y_location[0]][p1_bullet_x_location[0]] = 'o'
   playing_field[p2_bullet_y_location[0]][p2_bullet_x_location[0]] = 'o'
   
@@ -236,15 +242,38 @@ def print_playing_field():
   # keep the length of p1_bullet_string equal to 6, so p2_bullet_string doesn't change position in the print line below
   while len(p1_bullet_string) < 6:
     p1_bullet_string += " "
-    
-  print "        Score:", player_one_score, "                            Score: ", player_two_score
+
+  print "        Score:", player_one_score, "            ", game_time_left, "              Score: ", player_two_score
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       print playing_field[x][y],
     print ""
   print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
-def check_for_key_press():
+def print_after_score(winner_for_round):
+  p1_bullet_string = ""
+  for bullet in range(p1_bullet_count+1):
+    p1_bullet_string += "|"
+
+  p2_bullet_string = ""
+  for bullet in range(p2_bullet_count+1):
+    p2_bullet_string += "|"
+
+  print "        Score:", player_one_score, "                            Score: ", player_two_score
+  for x in range(len(playing_field)):
+    if x == 2:
+      print "|                       Player", winner_for_round, " Wins                        |"
+    else:
+      for y in range(len(playing_field[0])):
+        print playing_field[x][y],
+      print ""
+  print "        ", p1_bullet_string, "                             ", p2_bullet_string
+
+  # wait 3 seconds
+  time.sleep(3)
+
+
+def game_loop():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
   global bullet_x_location, bullet_y_location, p1_bullet_count, p2_bullet_count, bullet_direction, player_two_score, player_one_score
   
@@ -312,6 +341,10 @@ def check_for_key_press():
 
       # return one object/dictionary instead of these long lines here:
 
+      # check if score changed, if so, take a break
+      current_p1_score = player_one_score
+      current_p2_score = player_two_score
+
       #player_one_score, player_two_score, p1_bullet_active[x], p2_bullet_active[x] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[x], p1_bullet_y_location[x], p2_bullet_x_location[x], p2_bullet_y_location[x], p1_bullet_active[x], p2_bullet_active[x])
       player_one_score, player_two_score, p1_bullet_active[0], p2_bullet_active[0] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[0], p1_bullet_y_location[0], p2_bullet_x_location[0], p2_bullet_y_location[0], p1_bullet_active[0], p2_bullet_active[0])                                                                                                    
       player_one_score, player_two_score, p1_bullet_active[1], p2_bullet_active[1] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[1], p1_bullet_y_location[1], p2_bullet_x_location[1], p2_bullet_y_location[1], p1_bullet_active[1], p2_bullet_active[1])   
@@ -319,6 +352,13 @@ def check_for_key_press():
       player_one_score, player_two_score, p1_bullet_active[3], p2_bullet_active[3] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[3], p1_bullet_y_location[3], p2_bullet_x_location[3], p2_bullet_y_location[3], p1_bullet_active[3], p2_bullet_active[3])   
       player_one_score, player_two_score, p1_bullet_active[4], p2_bullet_active[4] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[4], p1_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p1_bullet_active[4], p2_bullet_active[4])   
       player_one_score, player_two_score, p1_bullet_active[5], p2_bullet_active[5] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[5], p1_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p1_bullet_active[5], p2_bullet_active[5])   
+
+      # check if score changed, if so, take a break
+      if player_one_score > current_p1_score:
+        print_after_score(1)
+      elif player_two_score > current_p2_score:
+        print_after_score(2)
+
 
 
       p1_bullet_direction[0], p1_bullet_y_location[0], p1_bullet_x_location[0], p1_bullet_active[0] = move_bullets(p1_bullet_direction[0], p1_bullet_x_location[0], p1_bullet_y_location[0], p1_bullet_active[0])
@@ -339,6 +379,14 @@ def check_for_key_press():
       update_playing_field()
       print_playing_field()
       time.sleep(0.05)
+
+      global second_interval, game_time_left
+      second_interval += 0.05
+
+      if second_interval > 0.95:
+        game_time_left-= 1
+        second_interval = 0
+
   finally:
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
@@ -346,4 +394,4 @@ def check_for_key_press():
 # Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
 sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))
 start_menu()
-check_for_key_press()
+game_loop()
