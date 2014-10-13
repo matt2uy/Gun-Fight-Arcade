@@ -59,7 +59,7 @@ playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
                  ["\\","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","/"]]
 
 game_over = False
-game_time_left = 2
+game_time_left = 30
 second_interval = 0
 refresh_rate = 0.05
 
@@ -204,7 +204,8 @@ def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_b
 def update_playing_field():
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
-      if playing_field[x][y] != " ": playing_field[x][y] = " "
+      if playing_field[x][y] == "1" or playing_field[x][y] == "2" or playing_field[x][y] == "o": 
+        playing_field[x][y] = " "
     print ""
 
   # print both players
@@ -286,7 +287,7 @@ def print_playing_field():
 
 def print_after_score(winner_for_round):
   if winner_for_round == 1 or winner_for_round == 2:
-    game_message = "|                       Player " + str(winner_for_round) + " Scores!                        |"
+    game_message = "|                       Player " + str(winner_for_round) + " Scores!                      |"
   elif winner_for_round == 0:
     game_message = "|                        No more bullets!                     |"
   elif winner_for_round == 3:
@@ -316,11 +317,11 @@ def print_after_score(winner_for_round):
 
 def print_post_game():
   if player_one_score > player_two_score: 
-    game_message = "|                  Game Over! Player 1 Wins!               |"
+    game_message = "|                  Game Over! Player 1 Wins!                  |"
   elif player_two_score > player_one_score: 
-    game_message = "|                  Game Over! Player 2 Wins!               |"
+    game_message = "|                  Game Over! Player 2 Wins!                  |"
   else:
-    game_message = "|                      Game Over! Draw!                    |"
+    game_message = "|                      Game Over! Draw!                       |"
   print "        Score:", player_one_score, "            ", game_time_left, "              Score: ", player_two_score
   for x in range(len(playing_field)):
     if x == 2:
