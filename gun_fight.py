@@ -11,7 +11,7 @@
 ######################  Done: Countdown time and break after a score
               
 
-######################  Next: after score: reset bullets, locations. Clear playing field.
+######################  Next: After each round - reset playing field
 ###################### Later: actual end of game - timer done
 
 
@@ -38,6 +38,7 @@
 # multiple bullets
 # obstacles
 import termios, fcntl, sys, os, time, tty
+from termios import tcflush, TCIOFLUSH
 ### game variables ###
 # Small
 playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","\\"],
@@ -58,8 +59,9 @@ playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
                  ["\\","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","/"]]
 
 game_over = False
-game_time_left = 99
+game_time_left = 2
 second_interval = 0
+refresh_rate = 0.05
 
 player_one_x_location = 4
 player_one_y_location = 7
@@ -117,6 +119,7 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
       bullet_x_location = player_x_location - 1
       bullet_y_location = player_y_location - 1
   return bullet_active, bullet_x_location, bullet_y_location, bullet_count
+
 def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active): 
   if bullet_active == True: 
     # clear previous bullet 
@@ -160,6 +163,33 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
 
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 
+def refresh_playing_field_variables():
+  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active 
+
+  player_one_x_location = 4
+  player_one_y_location = 7
+  p1_bullet_count = 5 # -1 because in shoot(), bullet_count adds one to itself (0+1 = 1, so to get to element 0, -1+1 = 0)
+
+  player_two_x_location = len(playing_field[0]) - 5
+  player_two_y_location = 7
+  p2_bullet_count = 5 # -1 because in shoot(), bullet_count adds one to itself (0+1 = 1, so to get to element 0, -1+1 = 0)
+
+  # bullet data for each player. Each element is the bullet # for each player (6 bullets per person)
+  p1_bullet_x_location = [0, 0, 0, 0, 0, 0]
+  p1_bullet_y_location = [0, 0, 0, 0, 0, 0]
+  p1_bullet_direction = ["Right-Up", "Right-Up", "Right-Up", "Right-Up", "Right-Up", "Right-Up"]
+  p1_bullet_active = [False, False, False, False, False, False]
+
+  p2_bullet_x_location = [0, 0, 0, 0, 0, 0]
+  p2_bullet_y_location = [0, 0, 0, 0, 0, 0]
+  p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
+  p2_bullet_active = [False, False, False, False, False, False]
+
+def refresh_playing_field():
+  refresh_playing_field_variables()
+  update_playing_field()
+  print_playing_field()
+
 def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_bullet_y_location, p2_bullet_x_location, p2_bullet_y_location, p1_bullet_active, p2_bullet_active):
   if player_two_x_location == p1_bullet_x_location and player_two_y_location == p1_bullet_y_location and p1_bullet_active == True:
     player_one_score += 1
@@ -172,6 +202,11 @@ def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_b
   return player_one_score, player_two_score, p1_bullet_active, p2_bullet_active
 
 def update_playing_field():
+  for x in range(len(playing_field)):
+    for y in range(len(playing_field[0])):
+      if playing_field[x][y] != " ": playing_field[x][y] = " "
+    print ""
+
   # print both players
   playing_field[player_one_y_location][player_one_x_location] = '1'
   playing_field[player_two_y_location][player_two_x_location] = '2'
@@ -225,8 +260,7 @@ def start_menu():
   print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
   # wait for enter to be pressed
-  enter_key_pressed = raw_input()
-    
+  enter_key_pressed = raw_input()   
 
 def print_playing_field():
   p1_bullet_string = ""
@@ -251,27 +285,54 @@ def print_playing_field():
   print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
 def print_after_score(winner_for_round):
-  p1_bullet_string = ""
-  for bullet in range(p1_bullet_count+1):
-    p1_bullet_string += "|"
-
-  p2_bullet_string = ""
-  for bullet in range(p2_bullet_count+1):
-    p2_bullet_string += "|"
-
-  print "        Score:", player_one_score, "                            Score: ", player_two_score
+  if winner_for_round == 1 or winner_for_round == 2:
+    game_message = "|                       Player " + str(winner_for_round) + " Scores!                        |"
+  elif winner_for_round == 0:
+    game_message = "|                        No more bullets!                     |"
+  elif winner_for_round == 3:
+    winner_for_game = 0
+    if player_one_score > player_two_score: 
+      winner_for_game = 1
+    elif player_two_score > player_one_score: 
+      winner_for_game = 2
+    game_message = "|                  Game Over! Player " + str(winner_for_game) + " Wins!               |"
+    
+  print "        Score:", player_one_score, "            ", game_time_left, "              Score: ", player_two_score
   for x in range(len(playing_field)):
     if x == 2:
-      print "|                       Player", winner_for_round, " Wins                        |"
+      print game_message
     else:
       for y in range(len(playing_field[0])):
         print playing_field[x][y],
       print ""
-  print "        ", p1_bullet_string, "                             ", p2_bullet_string
+  print ""
 
-  # wait 3 seconds
-  time.sleep(3)
+  # 2 second break
+  time.sleep(2)
 
+  # ignore all keystrokes in this period
+  tcflush(sys.stdin, TCIOFLUSH)
+  refresh_playing_field()
+
+def print_post_game():
+  if player_one_score > player_two_score: 
+    game_message = "|                  Game Over! Player 1 Wins!               |"
+  elif player_two_score > player_one_score: 
+    game_message = "|                  Game Over! Player 2 Wins!               |"
+  else:
+    game_message = "|                      Game Over! Draw!                    |"
+  print "        Score:", player_one_score, "            ", game_time_left, "              Score: ", player_two_score
+  for x in range(len(playing_field)):
+    if x == 2:
+      print game_message
+    else:
+      for y in range(len(playing_field[0])):
+        print playing_field[x][y],
+      print ""
+  print ""
+
+  # ignore all keystrokes in this period
+  tcflush(sys.stdin, TCIOFLUSH)
 
 def game_loop():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
@@ -292,7 +353,7 @@ def game_loop():
   fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
   try:
-    while 1:
+    while game_over == False:
       # check for keypress. If there isn't any, don't check for which key pressed and do a screen refresh.
       try:
         char = ord(sys.stdin.read(1))
@@ -353,13 +414,15 @@ def game_loop():
       player_one_score, player_two_score, p1_bullet_active[4], p2_bullet_active[4] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[4], p1_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p1_bullet_active[4], p2_bullet_active[4])   
       player_one_score, player_two_score, p1_bullet_active[5], p2_bullet_active[5] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[5], p1_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p1_bullet_active[5], p2_bullet_active[5])   
 
+      # check if bullets are out, if so, take a break
+      if p1_bullet_count < 0 and p2_bullet_count < 0:
+        print_after_score(0)
+
       # check if score changed, if so, take a break
       if player_one_score > current_p1_score:
         print_after_score(1)
       elif player_two_score > current_p2_score:
         print_after_score(2)
-
-
 
       p1_bullet_direction[0], p1_bullet_y_location[0], p1_bullet_x_location[0], p1_bullet_active[0] = move_bullets(p1_bullet_direction[0], p1_bullet_x_location[0], p1_bullet_y_location[0], p1_bullet_active[0])
       p1_bullet_direction[1], p1_bullet_y_location[1], p1_bullet_x_location[1], p1_bullet_active[1] = move_bullets(p1_bullet_direction[1], p1_bullet_x_location[1], p1_bullet_y_location[1], p1_bullet_active[1])
@@ -374,19 +437,23 @@ def game_loop():
       p2_bullet_direction[3], p2_bullet_y_location[3], p2_bullet_x_location[3], p2_bullet_active[3] = move_bullets(p2_bullet_direction[3], p2_bullet_x_location[3], p2_bullet_y_location[3], p2_bullet_active[3])
       p2_bullet_direction[4], p2_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_active[4] = move_bullets(p2_bullet_direction[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p2_bullet_active[4])
       p2_bullet_direction[5], p2_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_active[5] = move_bullets(p2_bullet_direction[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p2_bullet_active[5])
-      
 
       update_playing_field()
       print_playing_field()
-      time.sleep(0.05)
+      time.sleep(refresh_rate)
 
-      global second_interval, game_time_left
-      second_interval += 0.05
+      global second_interval, game_time_left, game_over
+      second_interval += refresh_rate
 
-      if second_interval > 0.95:
-        game_time_left-= 1
+      # '1.18' - just trying to keep timing precise, need to find a
+      # new way to keep time synced with refresh rate
+      if second_interval > 1.18:
+        game_time_left -= 1
         second_interval = 0
 
+      # check if time ran out
+      if game_time_left < 1:
+        game_over = True
   finally:
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
@@ -395,3 +462,5 @@ def game_loop():
 sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))
 start_menu()
 game_loop()
+print_post_game()
+time.sleep(2)
