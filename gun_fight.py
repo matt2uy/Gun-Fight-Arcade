@@ -306,7 +306,7 @@ def game_loop():
         elif char == 115:
           player_one_x_location, player_one_y_location = move_player("down", player_one_x_location, player_one_y_location)
           print 's'
-        elif char==97:
+        elif char == 97:
           player_one_x_location, player_one_y_location = move_player("left", player_one_x_location, player_one_y_location)
           print 'a'
         elif char == 100:
@@ -318,19 +318,19 @@ def game_loop():
           print 'f'
 
         # player 2
-        elif char == 91:
+        elif char == '\x1b[A':
           print 'up'
           player_two_x_location, player_two_y_location = move_player("up", player_two_x_location, player_two_y_location)
-        elif char == 39:
+        elif char == 66:
           print 'down'
           player_two_x_location, player_two_y_location = move_player("down", player_two_x_location, player_two_y_location)
-        elif char == 59:
+        elif char == 68:
           print 'left'
           player_two_x_location, player_two_y_location = move_player("left", player_two_x_location, player_two_y_location)
-        elif char == 92:
+        elif char == 67:
           print 'right'
           player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
-        elif char == 108:
+        elif char == 10:
           print 'fire'
           if p2_bullet_count > -1:   
             p2_bullet_active[p2_bullet_count], p2_bullet_x_location[p2_bullet_count], p2_bullet_y_location[p2_bullet_count], p2_bullet_count = shoot("Left-Up", p2_bullet_active[p2_bullet_count], p2_bullet_count, player_two_x_location, player_two_y_location)
