@@ -58,6 +58,9 @@ playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["\\","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","/"]]
 
+
+arrow_key_count = False
+
 game_over = False
 game_time_left = 30
 second_interval = 0
@@ -379,17 +382,24 @@ def game_loop():
             p1_bullet_active[p1_bullet_count], p1_bullet_x_location[p1_bullet_count], p1_bullet_y_location[p1_bullet_count], p1_bullet_count = shoot("Right-Up", p1_bullet_active[p1_bullet_count], p1_bullet_count, player_one_x_location, player_one_y_location)
           print 'f'
 
+        global arrow_key_count
+        if char == 27 or char == 91:
+          arrow_key_count = True
         # player 2
-        elif char == '\x1b[A':
+        if char == 65:
+          arrow_key_count = True
           print 'up'
           player_two_x_location, player_two_y_location = move_player("up", player_two_x_location, player_two_y_location)
         elif char == 66:
+          arrow_key_count = True
           print 'down'
           player_two_x_location, player_two_y_location = move_player("down", player_two_x_location, player_two_y_location)
         elif char == 68:
+          arrow_key_count = True
           print 'left'
           player_two_x_location, player_two_y_location = move_player("left", player_two_x_location, player_two_y_location)
         elif char == 67:
+          arrow_key_count = True
           print 'right'
           player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
         elif char == 10:
@@ -441,7 +451,12 @@ def game_loop():
 
       update_playing_field()
       print_playing_field()
-      time.sleep(refresh_rate)
+
+      if arrow_key_count == False:
+        time.sleep(refresh_rate)
+      elif arrow_key_count == True:
+        time.sleep(refresh_rate/4)
+        arrow_key_count = False
 
       global second_interval, game_time_left, game_over
       second_interval += refresh_rate
