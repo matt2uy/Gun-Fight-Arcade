@@ -8,11 +8,11 @@
 
 
 
-######################  Done: Countdown time and break after a score
+######################  Done: 
               
 
-######################  Next: After each round - reset playing field
-###################### Later: actual end of game - timer done
+######################  Next: players can't pass boundary
+###################### Later: 
 
 
 
@@ -85,7 +85,14 @@ p2_bullet_y_location = [0, 0, 0, 0, 0, 0]
 p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
 p2_bullet_active = [False, False, False, False, False, False]
 
-def move_player(direction, player_x_location, player_y_location):
+def move_player(player, direction, player_x_location, player_y_location):
+  '''if player == 1 and player_x_location > len(playing_field[0])/2:
+    player_x_location = player_x_location-1
+    player_y_location = player_y_location-1
+  elif player == 2 and player_x_location < len(playing_field[0])/2:
+    player_x_location = player_x_location+1
+    player_y_location = player_y_location+1'''
+
   if direction == "up":
     if player_y_location != 1:  
       playing_field[player_y_location][player_x_location] = " "
@@ -97,14 +104,25 @@ def move_player(direction, player_x_location, player_y_location):
       player_y_location+=1
 
   elif direction == "left":
-    if player_x_location != 1:
-      playing_field[player_y_location][player_x_location] = " "
-      player_x_location-=1
+    if player == 2 and player_x_location > (len(playing_field[0])/2)+6: 
+      if player_x_location != 1:
+        playing_field[player_y_location][player_x_location] = " "
+        player_x_location-=1
+    elif player == 1:
+      if player_x_location != 1:
+        playing_field[player_y_location][player_x_location] = " "
+        player_x_location-=1
+
 
   elif direction == "right":
-    if player_x_location != len(playing_field[0])-2:
+    if player == 1 and player_x_location < (len(playing_field[0])/2)-7:
+      if player_x_location != len(playing_field[0])-2:
+        playing_field[player_y_location][player_x_location] = " "
+        player_x_location+=1
+    elif player == 2:
       playing_field[player_y_location][player_x_location] = " "
       player_x_location+=1
+
   return player_x_location, player_y_location
 
 def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, player_y_location):
@@ -364,16 +382,16 @@ def game_loop():
         if char=='\x1b[A':
           print "up"
         elif char == 119:
-          player_one_x_location, player_one_y_location = move_player("up", player_one_x_location, player_one_y_location)
+          player_one_x_location, player_one_y_location = move_player(1, "up", player_one_x_location, player_one_y_location)
           print 'w'     
         elif char == 115:
-          player_one_x_location, player_one_y_location = move_player("down", player_one_x_location, player_one_y_location)
+          player_one_x_location, player_one_y_location = move_player(1, "down", player_one_x_location, player_one_y_location)
           print 's'
         elif char == 97:
-          player_one_x_location, player_one_y_location = move_player("left", player_one_x_location, player_one_y_location)
+          player_one_x_location, player_one_y_location = move_player(1, "left", player_one_x_location, player_one_y_location)
           print 'a'
         elif char == 100:
-          player_one_x_location, player_one_y_location = move_player("right", player_one_x_location, player_one_y_location)
+          player_one_x_location, player_one_y_location = move_player(1, "right", player_one_x_location, player_one_y_location)
           print 'd'
         elif char == 102:   
           if p1_bullet_count > -1:                                                                    
@@ -389,16 +407,16 @@ def game_loop():
 
         if char == 65:
           print 'up'
-          player_two_x_location, player_two_y_location = move_player("up", player_two_x_location, player_two_y_location)
+          player_two_x_location, player_two_y_location = move_player(2, "up", player_two_x_location, player_two_y_location)
         elif char == 66:
           print 'down'
-          player_two_x_location, player_two_y_location = move_player("down", player_two_x_location, player_two_y_location)
+          player_two_x_location, player_two_y_location = move_player(2, "down", player_two_x_location, player_two_y_location)
         elif char == 68:
           print 'left'
-          player_two_x_location, player_two_y_location = move_player("left", player_two_x_location, player_two_y_location)
+          player_two_x_location, player_two_y_location = move_player(2, "left", player_two_x_location, player_two_y_location)
         elif char == 67:
           print 'right'
-          player_two_x_location, player_two_y_location = move_player("right", player_two_x_location, player_two_y_location)
+          player_two_x_location, player_two_y_location = move_player(2, "right", player_two_x_location, player_two_y_location)
         elif char == 10:
           print 'fire'
           if p2_bullet_count > -1:   
