@@ -285,7 +285,6 @@ def start_menu():
   enter_key_pressed = raw_input()   
 
 def print_playing_field():
-  print p1_bullet_direction[5]
   p1_bullet_string = ""
   for bullet in range(p1_bullet_count+1):
     p1_bullet_string += "|"
@@ -452,14 +451,22 @@ def game_loop():
       player_one_score, player_two_score, p1_bullet_active[4], p2_bullet_active[4] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[4], p1_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p1_bullet_active[4], p2_bullet_active[4])   
       player_one_score, player_two_score, p1_bullet_active[5], p2_bullet_active[5] = check_for_hit(player_one_score, player_two_score, p1_bullet_x_location[5], p1_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p1_bullet_active[5], p2_bullet_active[5])   
 
+      no_bullets_active = True
+      for x in p1_bullet_active:
+        if x == True:
+          no_bullets_active = False
+      for x in p2_bullet_active:
+        if x == True:
+          no_bullets_active = False
+
       # check if bullets are out, if so, take a break
-      if p1_bullet_count < 0 and p2_bullet_count < 0:
+      if p1_bullet_count < 0 and p2_bullet_count < 0 and no_bullets_active == True:
         print_after_score(0)
 
       # check if score changed, if so, take a break
-      if player_one_score > current_p1_score:
+      if player_one_score > current_p1_score and no_bullets_active == True:
         print_after_score(1)
-      elif player_two_score > current_p2_score:
+      elif player_two_score > current_p2_score and no_bullets_active == True:
         print_after_score(2)
 
       p1_bullet_direction[0], p1_bullet_y_location[0], p1_bullet_x_location[0], p1_bullet_active[0] = move_bullets(p1_bullet_direction[0], p1_bullet_x_location[0], p1_bullet_y_location[0], p1_bullet_active[0])
@@ -498,7 +505,7 @@ def game_loop():
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 # Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
-sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=20, cols=66))
+sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))
 start_menu()
 game_loop()
 print_post_game()
