@@ -11,7 +11,7 @@
 ######################  Done: 
               
 
-######################  Next:shoot bullets both directions
+######################  Next:
 ###################### Later: 
 
 
@@ -112,8 +112,9 @@ def move_player(player, direction, player_x_location, player_y_location):
         playing_field[player_y_location][player_x_location] = " "
         player_x_location+=1
     elif player == 2:
-      playing_field[player_y_location][player_x_location] = " "
-      player_x_location+=1
+      if player_x_location != len(playing_field[0])-2:
+        playing_field[player_y_location][player_x_location] = " "
+        player_x_location+=1
 
   return player_x_location, player_y_location
 
@@ -459,7 +460,7 @@ def game_loop():
         if x == True:
           no_bullets_active = False
 
-      # check if bullets are out, if so, take a break
+      # check if bullets are out, if so, take a break 
       if p1_bullet_count < 0 and p2_bullet_count < 0 and no_bullets_active == True:
         print_after_score(0)
 
