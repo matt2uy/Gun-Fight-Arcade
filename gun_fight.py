@@ -86,34 +86,51 @@ p2_bullet_direction = ["none", "none", "none", "none", "none", "none"]
 p2_bullet_active = [False, False, False, False, False, False]
 
 def move_player(player, direction, player_x_location, player_y_location):
+  playing_field[player_y_location-2][player_x_location] = ' '
+  playing_field[player_y_location-2][player_x_location+1] = ' '
+
+  playing_field[player_y_location-1][player_x_location] = ' '
+  playing_field[player_y_location-1][player_x_location+1] = ' '
+
+  playing_field[player_y_location][player_x_location-1] = ' '
+  playing_field[player_y_location][player_x_location] = ' '
+  playing_field[player_y_location][player_x_location+1] = ' '
+  playing_field[player_y_location][player_x_location+2] = ' '
+  playing_field[player_y_location][player_x_location+3] = ' '
+
+  playing_field[player_y_location+1][player_x_location] = ' '
+  playing_field[player_y_location+1][player_x_location+1] = ' '
+
+  playing_field[player_y_location+2][player_x_location-1] = ' '
+  playing_field[player_y_location+2][player_x_location+2] = ' '
   if direction == "up":
     if player_y_location != 1:  
-      playing_field[player_y_location][player_x_location] = " "
+      #playing_field[player_y_location][player_x_location] = " "
       player_y_location-=1
 
   elif direction == "down":
     if player_y_location != len(playing_field)-2:
-      playing_field[player_y_location][player_x_location] = " "
+      #playing_field[player_y_location][player_x_location] = " "
       player_y_location+=1
 
   elif direction == "left":
     if player == 2 and player_x_location > (len(playing_field[0])/2)+6: 
       if player_x_location != 1:
-        playing_field[player_y_location][player_x_location] = " "
+        #playing_field[player_y_location][player_x_location] = " "
         player_x_location-=1
     elif player == 1:
       if player_x_location != 1:
-        playing_field[player_y_location][player_x_location] = " "
+        #playing_field[player_y_location][player_x_location] = " "
         player_x_location-=1
 
   elif direction == "right":
     if player == 1 and player_x_location < (len(playing_field[0])/2)-7:
       if player_x_location != len(playing_field[0])-2:
-        playing_field[player_y_location][player_x_location] = " "
+        #playing_field[player_y_location][player_x_location] = " "
         player_x_location+=1
     elif player == 2:
       if player_x_location != len(playing_field[0])-2:
-        playing_field[player_y_location][player_x_location] = " "
+        #playing_field[player_y_location][player_x_location] = " "
         player_x_location+=1
 
   return player_x_location, player_y_location
@@ -229,9 +246,39 @@ def update_playing_field():
       if playing_field[x][y] == "1" or playing_field[x][y] == "2" or playing_field[x][y] == "o": 
         playing_field[x][y] = " "
     print ""
+  '''
+    __
+    () 
+   /||\_
+    ||
+   /  \
 
+
+
+
+  '''
   # print both players
-  playing_field[player_one_y_location][player_one_x_location] = '1'
+
+    # print player one character
+  playing_field[player_one_y_location-2][player_one_x_location] = '_'
+  playing_field[player_one_y_location-2][player_one_x_location+1] = '_'
+
+  playing_field[player_one_y_location-1][player_one_x_location] = '('
+  playing_field[player_one_y_location-1][player_one_x_location+1] = ')'
+
+  playing_field[player_one_y_location][player_one_x_location-1] = '/'
+  playing_field[player_one_y_location][player_one_x_location] = '|'
+  playing_field[player_one_y_location][player_one_x_location+1] = '|'
+  playing_field[player_one_y_location][player_one_x_location+2] = '\\'
+  playing_field[player_one_y_location][player_one_x_location+3] = '_'
+
+  playing_field[player_one_y_location+1][player_one_x_location] = '|'
+  playing_field[player_one_y_location+1][player_one_x_location+1] = '|'
+
+  playing_field[player_one_y_location+2][player_one_x_location-1] = '/'
+  playing_field[player_one_y_location+2][player_one_x_location+2] = '\\'
+
+
   playing_field[player_two_y_location][player_two_x_location] = '2'
 
   # print 6 bullets per person * 2
