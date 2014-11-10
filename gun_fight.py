@@ -8,11 +8,12 @@
 
 
 
-######################  Done: 
+######################  Done: Limited: larger players
               
 
-######################  Next:
-###################### Later: 
+######################  Next: Better looking players
+###################### Later: Extend to other functions (being hit + initial shoot() position)
+###################### After: Obstacles
 
 
 
@@ -86,6 +87,7 @@ p2_bullet_direction = ["none", "none", "none", "none", "none", "none"]
 p2_bullet_active = [False, False, False, False, False, False]
 
 def move_player(player, direction, player_x_location, player_y_location):
+  '''
   playing_field[player_y_location-2][player_x_location] = ' '
   playing_field[player_y_location-2][player_x_location+1] = ' '
 
@@ -93,7 +95,9 @@ def move_player(player, direction, player_x_location, player_y_location):
   playing_field[player_y_location-1][player_x_location+1] = ' '
 
   playing_field[player_y_location][player_x_location-1] = ' '
+
   playing_field[player_y_location][player_x_location] = ' '
+
   playing_field[player_y_location][player_x_location+1] = ' '
   playing_field[player_y_location][player_x_location+2] = ' '
   playing_field[player_y_location][player_x_location+3] = ' '
@@ -103,6 +107,9 @@ def move_player(player, direction, player_x_location, player_y_location):
 
   playing_field[player_y_location+2][player_x_location-1] = ' '
   playing_field[player_y_location+2][player_x_location+2] = ' '
+  '''
+
+  playing_field[player_y_location][player_x_location] = ' '
   if direction == "up":
     if player_y_location != 1:  
       #playing_field[player_y_location][player_x_location] = " "
@@ -247,19 +254,24 @@ def update_playing_field():
         playing_field[x][y] = " "
     print ""
   '''
+
+  The players could look like this...
     __
     () 
    /||\_
     ||
    /  \
 
+   Or maybe decrease the font size of the terminal to draw more intricate players
 
+   Or use something like https://github.com/asciimoo/drawille
 
 
   '''
   # print both players
 
     # print player one character
+  '''
   playing_field[player_one_y_location-2][player_one_x_location] = '_'
   playing_field[player_one_y_location-2][player_one_x_location+1] = '_'
 
@@ -277,6 +289,9 @@ def update_playing_field():
 
   playing_field[player_one_y_location+2][player_one_x_location-1] = '/'
   playing_field[player_one_y_location+2][player_one_x_location+2] = '\\'
+  '''
+
+  playing_field[player_one_y_location][player_one_x_location] = '1'
 
 
   playing_field[player_two_y_location][player_two_x_location] = '2'
@@ -299,6 +314,12 @@ def update_playing_field():
 
   playing_field[p1_bullet_y_location[5]][p1_bullet_x_location[5]] = 'o'
   playing_field[p2_bullet_y_location[5]][p2_bullet_x_location[5]] = 'o'
+
+  for x in range(len(playing_field)):
+    playing_field[x][0] = '|'
+
+  for x in range(len(playing_field)):
+    playing_field[x][len(playing_field[0])-1] = '|'
 
 def start_menu():
   p1_bullet_string = ""
