@@ -8,7 +8,7 @@
 
 
 
-######################  Done: Limited: larger players
+######################  Done: no double scores before a refresh
               
 
 ######################  Next: Better looking players
@@ -528,13 +528,17 @@ def game_loop():
         if x == True:
           no_bullets_active = False
 
-      # check if bullets are out, if so, take a break 
+      # check if bullets are out and no bullets flying, if so, take a break 
+      if player_one_score > current_p1_score or player_two_score > current_p2_score:
+        no_bullets_active = True
+
       if p1_bullet_count < 0 and p2_bullet_count < 0 and no_bullets_active == True:
         print_after_score(0)
 
-      # check if score changed, if so, take a break
-      if player_one_score > current_p1_score and no_bullets_active == True:
+      # check if score changed and no bullets flying, if so, take a break
+      elif player_one_score > current_p1_score and no_bullets_active == True:
         print_after_score(1)
+
       elif player_two_score > current_p2_score and no_bullets_active == True:
         print_after_score(2)
 
