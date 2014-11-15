@@ -321,6 +321,8 @@ def update_playing_field():
   for x in range(len(playing_field)):
     playing_field[x][len(playing_field[0])-1] = '|'
 
+# ------------- Menus -----------------
+
 def start_menu():
   p1_bullet_string = ""
   for bullet in range(p1_bullet_count+1):
@@ -337,12 +339,82 @@ def start_menu():
     elif x == 3:
       print "|       ----------                           ----------       |"
     elif x == 4:
-      print "|         W - Up                               [ = Up         |"
+      print "|         W - Up                               [ - Up         |"
     elif x == 6:
-      print "|   A - Left   D - Right               ; = Left   \ = Right   |"
+      print "|   A - Left   D - Right               ; - Left   \ - Right   |"
     elif x == 8:
-      print "|         S - Down                            '' = Down       |"
-    elif x == 12:
+      print "|         S - Down                            '' - Down       |"
+    elif x == 10:
+      print "|         R - Shoot Up                     Enter - Shoot Up   |"
+    elif x == 11:
+      print "|         F - Shoot Down                       / - Shoot Down |"
+    elif x == 13:
+      print "|                   Press enter to begin...                   |"
+    else:
+      for y in range(len(playing_field[0])):
+        print playing_field[x][y],
+      print ""
+  print "        ", p1_bullet_string, "                             ", p2_bullet_string
+
+  # wait for enter to be pressed
+  enter_key_pressed = raw_input()  
+  if enter_key_pressed == 'c':
+    start_menu()
+
+
+def start_menu():
+  p1_bullet_string = ""
+  for bullet in range(p1_bullet_count+1):
+    p1_bullet_string += "|"
+
+  p2_bullet_string = ""
+  for bullet in range(p2_bullet_count+1):
+    p2_bullet_string += "|"
+
+  print "        Score:", player_one_score, "                            Score: ", player_two_score
+  for x in range(len(playing_field)):
+    if x == 5:
+      print "|                   Press enter to begin...                   |"
+    elif x == 13:
+      print "|                  Controls: Press c + enter                  |"
+    else:
+      for y in range(len(playing_field[0])):
+        print playing_field[x][y],
+      print ""
+  print "        ", p1_bullet_string, "                             ", p2_bullet_string
+
+  # wait for enter to be pressed
+  enter_key_pressed = raw_input()  
+  if enter_key_pressed == 'c':
+    show_controls()
+
+
+def show_controls():
+  p1_bullet_string = ""
+  for bullet in range(p1_bullet_count+1):
+    p1_bullet_string += "|"
+
+  p2_bullet_string = ""
+  for bullet in range(p2_bullet_count+1):
+    p2_bullet_string += "|"
+
+  print "        Score:", player_one_score, "                            Score: ", player_two_score
+  for x in range(len(playing_field)):
+    if x == 2:
+      print "|       Player One                           Player Two       |"
+    elif x == 3:
+      print "|       ----------                           ----------       |"
+    elif x == 4:
+      print "|         W - Up                               [ - Up         |"
+    elif x == 6:
+      print "|   A - Left   D - Right               ; - Left   \ - Right   |"
+    elif x == 8:
+      print "|         S - Down                            '' - Down       |"
+    elif x == 10:
+      print "|         R - Shoot Up                     Enter - Shoot Up   |"
+    elif x == 11:
+      print "|         F - Shoot Down                       / - Shoot Down |"
+    elif x == 13:
       print "|                   Press enter to begin...                   |"
     else:
       for y in range(len(playing_field[0])):
