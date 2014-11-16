@@ -59,9 +59,10 @@ playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["\\","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","/"]]
 
-
+replay_game = True
 game_over = False
-game_time_left = 30
+game_length = 5
+game_time_left = game_length
 second_interval = 0
 refresh_rate = 0.05
 
@@ -236,6 +237,14 @@ def refresh_playing_field():
   update_playing_field()
   print_playing_field()
 
+def refresh_game():
+  global game_over, game_time_left, player_one_score, player_two_score
+  game_over = False
+  game_time_left = game_length
+  player_one_score = 0
+  player_two_score = 0
+  refresh_playing_field();
+
 def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_bullet_y_location, p2_bullet_x_location, p2_bullet_y_location, p1_bullet_active, p2_bullet_active):
   if player_two_x_location == p1_bullet_x_location and player_two_y_location == p1_bullet_y_location and p1_bullet_active == True:
     player_one_score += 1
@@ -323,44 +332,6 @@ def update_playing_field():
 
 # ------------- Menus -----------------
 
-def start_menu():
-  p1_bullet_string = ""
-  for bullet in range(p1_bullet_count+1):
-    p1_bullet_string += "|"
-
-  p2_bullet_string = ""
-  for bullet in range(p2_bullet_count+1):
-    p2_bullet_string += "|"
-
-  print "        Score:", player_one_score, "                            Score: ", player_two_score
-  for x in range(len(playing_field)):
-    if x == 2:
-      print "|       Player One                           Player Two       |"
-    elif x == 3:
-      print "|       ----------                           ----------       |"
-    elif x == 4:
-      print "|         W - Up                               [ - Up         |"
-    elif x == 6:
-      print "|   A - Left   D - Right               ; - Left   \ - Right   |"
-    elif x == 8:
-      print "|         S - Down                            '' - Down       |"
-    elif x == 10:
-      print "|         R - Shoot Up                     Enter - Shoot Up   |"
-    elif x == 11:
-      print "|         F - Shoot Down                       / - Shoot Down |"
-    elif x == 13:
-      print "|                   Press enter to begin...                   |"
-    else:
-      for y in range(len(playing_field[0])):
-        print playing_field[x][y],
-      print ""
-  print "        ", p1_bullet_string, "                             ", p2_bullet_string
-
-  # wait for enter to be pressed
-  enter_key_pressed = raw_input()  
-  if enter_key_pressed == 'c':
-    start_menu()
-
 
 def start_menu():
   p1_bullet_string = ""
@@ -376,17 +347,40 @@ def start_menu():
     if x == 5:
       print "|                   Press enter to begin...                   |"
     elif x == 13:
-      print "|                  Controls: Press c + enter                  |"
+      print "|                   Press 'c' for controls                    |"
     else:
       for y in range(len(playing_field[0])):
         print playing_field[x][y],
       print ""
   print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
-  # wait for enter to be pressed
-  enter_key_pressed = raw_input()  
-  if enter_key_pressed == 'c':
-    show_controls()
+
+
+
+
+
+  fd = sys.stdin.fileno()
+
+  oldterm = termios.tcgetattr(fd)
+  newattr = termios.tcgetattr(fd)
+  newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+  termios.tcsetattr(fd, termios.TCSANOW, newattr)
+
+  oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+  fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+
+  key_not_pressed = True
+  while key_not_pressed == True:
+    try:
+      key_pressed = ord(sys.stdin.read(1))
+      if key_pressed == 10:
+        key_not_pressed = False
+      elif key_pressed == 99:
+        show_controls() 
+      elif key_pressed == 27:
+        sys.exit()        
+        
+    except IOError: pass
 
 
 def show_controls():
@@ -423,7 +417,23 @@ def show_controls():
   print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
   # wait for enter to be pressed
-  enter_key_pressed = raw_input()   
+  fd = sys.stdin.fileno()
+
+  oldterm = termios.tcgetattr(fd)
+  newattr = termios.tcgetattr(fd)
+  newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+  termios.tcsetattr(fd, termios.TCSANOW, newattr)
+
+  oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+  fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+
+  key_not_pressed = True
+  try:
+      key_pressed = ord(sys.stdin.read(1))
+      if key_pressed == 27:
+        sys.exit()
+        
+  except IOError: pass
 
 def print_playing_field():
   p1_bullet_string = ""
@@ -496,6 +506,8 @@ def print_post_game():
 
   # ignore all keystrokes in this period
   tcflush(sys.stdin, TCIOFLUSH)
+
+  return True
 
 def game_loop():
   global player_one_x_location, player_one_y_location, player_two_x_location, player_two_y_location, bullet_active
@@ -650,8 +662,10 @@ def game_loop():
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 # Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
-sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))
-start_menu()
-game_loop()
-print_post_game()
-time.sleep(2)
+sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))                                                                       
+while replay_game == True:
+  refresh_game()
+  start_menu()
+  game_loop()
+  replay_game = print_post_game()
+  time.sleep(1.5)
