@@ -354,23 +354,18 @@ def start_menu():
       print ""
   print "        ", p1_bullet_string, "                             ", p2_bullet_string
 
-
-
-
-
-
-  fd = sys.stdin.fileno()
-
-  oldterm = termios.tcgetattr(fd)
-  newattr = termios.tcgetattr(fd)
-  newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
-  termios.tcsetattr(fd, termios.TCSANOW, newattr)
-
-  oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
-  fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
-
+  # wait for enter to be pressed
   key_not_pressed = True
   while key_not_pressed == True:
+    fd = sys.stdin.fileno()
+
+    oldterm = termios.tcgetattr(fd)
+    newattr = termios.tcgetattr(fd)
+    newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+    termios.tcsetattr(fd, termios.TCSANOW, newattr)
+
+    oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
     try:
       key_pressed = ord(sys.stdin.read(1))
       if key_pressed == 10:
@@ -381,7 +376,9 @@ def start_menu():
         sys.exit()        
         
     except IOError: pass
-
+    finally:
+      termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+      fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 def show_controls():
   p1_bullet_string = ""
@@ -434,6 +431,9 @@ def show_controls():
         sys.exit()
         
   except IOError: pass
+  finally:
+      termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+      fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 def print_playing_field():
   p1_bullet_string = ""
@@ -668,4 +668,4 @@ while replay_game == True:
   start_menu()
   game_loop()
   replay_game = print_post_game()
-  time.sleep(1.5)
+  time.sleep(1.8)
