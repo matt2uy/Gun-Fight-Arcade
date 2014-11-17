@@ -1,47 +1,8 @@
-
-
-
-
-
-
-
-
-
-
-######################  Done: no double scores before a refresh
-              
-
-######################  Next: Better looking players
-###################### Later: Extend to other functions (being hit + initial shoot() position)
-###################### After: Obstacles
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# check for hit
-# multiple bullets
-# obstacles
 import termios, fcntl, sys, os, time, tty
 from termios import tcflush, TCIOFLUSH
+
 ### game variables ###
-# Small
+# Small (look at playing_field_sizes.py for other sizes)
 playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","\\"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
                  ["|"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","|"],
@@ -61,7 +22,7 @@ playing_field = [["/","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-
 
 replay_game = True
 game_over = False
-game_length = 5
+game_length = 20
 game_time_left = game_length
 second_interval = 0
 refresh_rate = 0.05
@@ -86,6 +47,10 @@ p2_bullet_x_location = [0, 0, 0, 0, 0, 0]
 p2_bullet_y_location = [0, 0, 0, 0, 0, 0]
 p2_bullet_direction = ["none", "none", "none", "none", "none", "none"]
 p2_bullet_active = [False, False, False, False, False, False]
+
+# obstacles
+obstacle1_x_location = [5,6,7,8,9]
+obstacle1_y_location = [14,15]
 
 def move_player(player, direction, player_x_location, player_y_location):
   '''
@@ -167,11 +132,24 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
       bullet_y_location = player_y_location + 1
   return bullet_active, bullet_x_location, bullet_y_location, bullet_count, bullet_direction
 
-def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active): 
+def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active):
+  global obstacle1_x_location, obstacle1_y_location
+  
+
   if bullet_active == True: 
     # clear previous bullet 
     playing_field[bullet_y_location][bullet_x_location] = " "
-      
+  
+    ### Hitting an obstacle ###
+    for x in obstacle1_x_location:
+      for y in obstacle1_y_location:
+        if bullet_x_location == y and bullet_y_location == x:
+          bullet_active = False
+          bullet_direction = "none"
+
+          obstacle1_x_location.pop(obstacle1_x_location.index(x))
+          obstacle1_y_location.pop(obstacle1_y_location.index(y))
+
     ### Hitting a boundary: ###
     # endzone boundary (left and right walls)
     if bullet_x_location > len(playing_field[0])-2:
@@ -211,7 +189,7 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 
 def refresh_playing_field_variables():
-  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active 
+  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active, obstacle1_y_location, obstacle1_x_location
 
   player_one_x_location = 4
   player_one_y_location = 7
@@ -231,6 +209,9 @@ def refresh_playing_field_variables():
   p2_bullet_y_location = [0, 0, 0, 0, 0, 0]
   p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
   p2_bullet_active = [False, False, False, False, False, False]
+
+  obstacle1_x_location = [5,6,7,8,9]
+  obstacle1_y_location = [14,15]
 
 def refresh_playing_field():
   refresh_playing_field_variables()
@@ -259,7 +240,7 @@ def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_b
 def update_playing_field():
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
-      if playing_field[x][y] == "1" or playing_field[x][y] == "2" or playing_field[x][y] == "o": 
+      if playing_field[x][y] == "1" or playing_field[x][y] == "2" or playing_field[x][y] == "o" or playing_field[x][y] == "0": 
         playing_field[x][y] = " "
     print ""
   '''
@@ -299,6 +280,9 @@ def update_playing_field():
   playing_field[player_one_y_location+2][player_one_x_location-1] = '/'
   playing_field[player_one_y_location+2][player_one_x_location+2] = '\\'
   '''
+  for x in obstacle1_x_location:
+    for y in obstacle1_y_location:
+      playing_field[x][y] = '0'
 
   playing_field[player_one_y_location][player_one_x_location] = '1'
 
@@ -640,6 +624,7 @@ def game_loop():
       p2_bullet_direction[4], p2_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_active[4] = move_bullets(p2_bullet_direction[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p2_bullet_active[4])
       p2_bullet_direction[5], p2_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_active[5] = move_bullets(p2_bullet_direction[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p2_bullet_active[5])
 
+
       update_playing_field()
       print_playing_field()
 
@@ -657,6 +642,8 @@ def game_loop():
       # check if time ran out
       if game_time_left < 1:
         game_over = True
+      print "x: ", obstacle1_x_location
+      print "y: ", obstacle1_y_location
   finally:
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
@@ -668,4 +655,4 @@ while replay_game == True:
   start_menu()
   game_loop()
   replay_game = print_post_game()
-  time.sleep(1.8)
+  time.sleep(1.5)
