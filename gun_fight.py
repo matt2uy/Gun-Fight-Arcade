@@ -152,12 +152,12 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
         x = 0
         y = 0
         '''
-        #print ordered_pair.index(ordered_pair)
+        #print "yo, :", obstacle1_location.index(ordered_pair)
         #time.sleep(1)
         #print obstacle1_x_location.index(ordered_pair)
         #time.sleep(1)
         
-        #obstacle1_location[obstacle1_x_location.index(ordered_pair)][ordered_pair.index(x)] = 0
+        obstacle1_location[obstacle1_location.index(ordered_pair)][0] = 0
 
         #obstacle1_x_location.pop(obstacle1_x_location.index(x))
         #obstacle1_y_location.pop(obstacle1_y_location.index(y))
