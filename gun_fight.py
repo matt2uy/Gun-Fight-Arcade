@@ -49,55 +49,26 @@ p2_bullet_direction = ["none", "none", "none", "none", "none", "none"]
 p2_bullet_active = [False, False, False, False, False, False]
 
 # obstacles
-obstacle1_x_location = [5,6,7,8,9]
-obstacle1_y_location = [14,15]
-
-obstacle1_x_active = []
-obstacle1_y_active = []
-for a in range(50):
-  obstacle1_x_active.append(False)
-for a in range(50):
-  obstacle1_y_active.append(False)
-for x in obstacle1_x_location:
-  obstacle1_x_active.insert(x, True)
-
-for y in obstacle1_y_location:
-  obstacle1_y_active.insert(y, True)
+obstacle1_x_location = [5]
+obstacle1_y_location = [14]
 
 
-obstacle_hit_x = 0
-obstacle_hit_y = 0
-
-'''
-    O  
-    O O
-  O O O
-  O O O
-  OOOOO
-    O
-
-
-'''
+obstacle1_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14],
+                      [5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
 
 def move_player(player, direction, player_x_location, player_y_location):
   '''
   playing_field[player_y_location-2][player_x_location] = ' '
   playing_field[player_y_location-2][player_x_location+1] = ' '
-
   playing_field[player_y_location-1][player_x_location] = ' '
   playing_field[player_y_location-1][player_x_location+1] = ' '
-
   playing_field[player_y_location][player_x_location-1] = ' '
-
   playing_field[player_y_location][player_x_location] = ' '
-
   playing_field[player_y_location][player_x_location+1] = ' '
   playing_field[player_y_location][player_x_location+2] = ' '
   playing_field[player_y_location][player_x_location+3] = ' '
-
   playing_field[player_y_location+1][player_x_location] = ' '
   playing_field[player_y_location+1][player_x_location+1] = ' '
-
   playing_field[player_y_location+2][player_x_location-1] = ' '
   playing_field[player_y_location+2][player_x_location+2] = ' '
   '''
@@ -160,78 +131,52 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
   return bullet_active, bullet_x_location, bullet_y_location, bullet_count, bullet_direction
 
 def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active):
-  global obstacle1_x_location, obstacle1_y_location, obstacle1_x_active, obstacle1_y_active
-  
+  global obstacle1_x_location, obstacle1_y_location, obstacle1_location
 
   if bullet_active == True: 
     # clear previous bullet 
     playing_field[bullet_y_location][bullet_x_location] = " "
   
     ### Hitting an obstacle ###
+    for ordered_pair in obstacle1_location:
+      x = ordered_pair[0]
+      y = ordered_pair[1]
+      if bullet_x_location == y and bullet_y_location == x:
+        # bullet stops
+        bullet_active = False
+        bullet_direction = "none"
+
+        # a piece of the obstacle "breaks off"
+        '''
+        basically:
+        x = 0
+        y = 0
+        '''
+        #print ordered_pair.index(ordered_pair)
+        #time.sleep(1)
+        #print obstacle1_x_location.index(ordered_pair)
+        #time.sleep(1)
+        
+        #obstacle1_location[obstacle1_x_location.index(ordered_pair)][ordered_pair.index(x)] = 0
+
+        #obstacle1_x_location.pop(obstacle1_x_location.index(x))
+        #obstacle1_y_location.pop(obstacle1_y_location.index(y))
+    '''
+    ### Hitting an obstacle ###
     for x in obstacle1_x_location:
       for y in obstacle1_y_location:
-        if bullet_x_location == y and bullet_y_location == x and obstacle1_x_active[x] == True and obstacle1_y_active[y] == True: # bullet location == obstacle location
+        if bullet_x_location == y and bullet_y_location == x:
+          # bullet stops
           bullet_active = False
           bullet_direction = "none"
 
-
-
-
-
-
-
-
-            #########
-            #########
-            ########
-            #########
-            ########
-            #########
-            ########
-            #########
-            ########
-            #########
-
-                            # NOTE: BELOW 'POP()' ARE DELETING MORE THAN ONE ELEMENT IN THE LIST SOMEHOW
-
-                                       # TEST IT OUT ON THE TERMINAL FIRST TO REACQUAINT
-
-
-            ########
-            #########
-            ########
-            #########
-            ########
-            #########
-            ########
-            #########
-            ########
-            #########
-
-
-
-
-
-
-
-
+          # a piece of the obstacle "breaks off"
+          obstacle1_x_location[obstacle1_x_location.index(x)] = 0
+          obstacle1_y_location[obstacle1_y_location.index(y)] = 0
 
           #obstacle1_x_location.pop(obstacle1_x_location.index(x))
           #obstacle1_y_location.pop(obstacle1_y_location.index(y))
-          
-          obstacle1_x_active[x] = False
-          obstacle1_y_active[y] = False
-
-
-
-
-
-
-
-
-
-
-
+    '''
 
     ### Hitting a boundary: ###
     # endzone boundary (left and right walls)
@@ -272,7 +217,7 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 
 def refresh_playing_field_variables():
-  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active, obstacle1_y_location, obstacle1_x_location
+  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active, obstacle1_y_location, obstacle1_x_location, obstacle1_location
 
   player_one_x_location = 4
   player_one_y_location = 7
@@ -293,8 +238,11 @@ def refresh_playing_field_variables():
   p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
   p2_bullet_active = [False, False, False, False, False, False]
 
-  obstacle1_x_location = [5,6,7,8,9]
-  obstacle1_y_location = [14,15]
+  obstacle1_x_location = [5]
+  obstacle1_y_location = [14]
+
+  obstacle1_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14],
+                      [5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
 
 def refresh_playing_field():
   refresh_playing_field_variables()
@@ -327,19 +275,14 @@ def update_playing_field():
         playing_field[x][y] = " "
     print ""
   '''
-
   The players could look like this...
     __
     () 
    /||\_
     ||
    /  \
-
    Or maybe decrease the font size of the terminal to draw more intricate players
-
    Or use something like https://github.com/asciimoo/drawille
-
-
   '''
   # print both players
 
@@ -347,25 +290,26 @@ def update_playing_field():
   '''
   playing_field[player_one_y_location-2][player_one_x_location] = '_'
   playing_field[player_one_y_location-2][player_one_x_location+1] = '_'
-
   playing_field[player_one_y_location-1][player_one_x_location] = '('
   playing_field[player_one_y_location-1][player_one_x_location+1] = ')'
-
   playing_field[player_one_y_location][player_one_x_location-1] = '/'
   playing_field[player_one_y_location][player_one_x_location] = '|'
   playing_field[player_one_y_location][player_one_x_location+1] = '|'
   playing_field[player_one_y_location][player_one_x_location+2] = '\\'
   playing_field[player_one_y_location][player_one_x_location+3] = '_'
-
   playing_field[player_one_y_location+1][player_one_x_location] = '|'
   playing_field[player_one_y_location+1][player_one_x_location+1] = '|'
-
   playing_field[player_one_y_location+2][player_one_x_location-1] = '/'
   playing_field[player_one_y_location+2][player_one_x_location+2] = '\\'
   '''
-  for x in obstacle1_x_location:
-    for y in obstacle1_y_location:
-      playing_field[x][y] = 'O'
+  #for x in obstacle1_x_location:
+  #  for y in obstacle1_y_location:
+  #    playing_field[x][y] = '0'
+
+  for ordered_pair in obstacle1_location:
+      x = ordered_pair[0]
+      y = ordered_pair[1]
+      playing_field[x][y] = '0'
 
   playing_field[player_one_y_location][player_one_x_location] = '1'
 
@@ -503,9 +447,6 @@ def show_controls():
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 def print_playing_field():
-
-  print "obstacle x:", obstacle1_y_active, " y:", obstacle1_x_active
-
   p1_bullet_string = ""
   for bullet in range(p1_bullet_count+1):
     p1_bullet_string += "|"
@@ -585,8 +526,6 @@ def game_loop():
   
   global p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active
   global p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active 
-
-  global obstacle1_x_location,obstacle1_y_location
 
 
   fd = sys.stdin.fileno()
@@ -712,6 +651,7 @@ def game_loop():
       p2_bullet_direction[4], p2_bullet_y_location[4], p2_bullet_x_location[4], p2_bullet_active[4] = move_bullets(p2_bullet_direction[4], p2_bullet_x_location[4], p2_bullet_y_location[4], p2_bullet_active[4])
       p2_bullet_direction[5], p2_bullet_y_location[5], p2_bullet_x_location[5], p2_bullet_active[5] = move_bullets(p2_bullet_direction[5], p2_bullet_x_location[5], p2_bullet_y_location[5], p2_bullet_active[5])
 
+
       update_playing_field()
       print_playing_field()
 
@@ -729,12 +669,14 @@ def game_loop():
       # check if time ran out
       if game_time_left < 1:
         game_over = True
+      print "x: ", obstacle1_x_location
+      print "y: ", obstacle1_y_location
   finally:
       termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
       fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 # Auto resize terminal window (doesn't work when window is fullscreen or half_screen)
-sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=20, cols=66))                                                                       
+sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=19, cols=66))                                                                       
 while replay_game == True:
   refresh_game()
   start_menu()
