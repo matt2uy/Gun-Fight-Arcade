@@ -51,14 +51,20 @@ p2_bullet_active = [False, False, False, False, False, False]
 # obstacles
 obstacle1_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14],
                       [5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
-obstacle1_active = [False, False, False, False, False, False, False, False, False, False,
-                    False, False, False, False, False, False, False, False, False, False,
-                    False, False, False, False, False, False, False, False, False, False,
-                    False, False, False, False, False, False, False, False, False, False,
-                    False, False, False, False, False, False, False, False, False, False,]
+obstacle2_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14]]
 
-for ordered_pair in obstacle1_location:
-  obstacle1_active[obstacle1_location.index(ordered_pair)] = True
+current_obstacle = 1
+
+current_obstacle_location = obstacle1_location
+
+obstacle_active = [False, False, False, False, False, False, False, False, False, False,
+                   False, False, False, False, False, False, False, False, False, False,
+                   False, False, False, False, False, False, False, False, False, False,
+                   False, False, False, False, False, False, False, False, False, False,
+                   False, False, False, False, False, False, False, False, False, False]
+
+for ordered_pair in current_obstacle_location:
+  obstacle_active[current_obstacle_location.index(ordered_pair)] = True
 
 def move_player(player, direction, player_x_location, player_y_location):
   if direction == "up":
@@ -112,21 +118,21 @@ def shoot(bullet_direction, bullet_active, bullet_count, player_x_location, play
   return bullet_active, bullet_x_location, bullet_y_location, bullet_count, bullet_direction
 
 def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_active):
-  global obstacle1_location, obstacle1_active, playing_field
+  global current_obstacle_location, obstacle_active, playing_field
 
   if bullet_active == True: 
-     ### Hitting an obstacle ###
-    for ordered_pair in obstacle1_location:
+    ### Hitting an obstacle ###
+    for ordered_pair in current_obstacle_location:
       x = ordered_pair[0]
       y = ordered_pair[1]
-      if bullet_x_location == y and bullet_y_location == x and obstacle1_active[obstacle1_location.index(ordered_pair)] == True:
+      if bullet_x_location == y and bullet_y_location == x and obstacle_active[current_obstacle_location.index(ordered_pair)] == True:
         # stop bullet
         bullet_active = False
         bullet_direction = "none"
 
-        obstacle1_active[obstacle1_location.index(ordered_pair)] = False
         # a piece of the obstacle "breaks off"
-        #obstacle1_location.pop([obstacle1_location.index(ordered_pair)][0]) # remove the x and y of the obstacle
+        obstacle_active[current_obstacle_location.index(ordered_pair)] = False
+        
     ### Hitting a boundary: ###
     # endzone boundary (left and right walls)
     if bullet_x_location > len(playing_field[0])-2:
@@ -166,7 +172,7 @@ def move_bullets(bullet_direction, bullet_x_location, bullet_y_location, bullet_
   return bullet_direction, bullet_y_location, bullet_x_location, bullet_active
 
 def refresh_playing_field_variables():
-  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active, obstacle1_location
+  global player_one_x_location, player_one_y_location, p1_bullet_count, player_two_x_location, player_two_y_location, p2_bullet_count, p1_bullet_x_location, p1_bullet_y_location, p1_bullet_direction, p1_bullet_active, p2_bullet_x_location, p2_bullet_y_location, p2_bullet_direction, p2_bullet_active, current_obstacle_location, current_obstacle, obstacle1_location, obstacle2_location
 
   player_one_x_location = 4
   player_one_y_location = 7
@@ -189,6 +195,18 @@ def refresh_playing_field_variables():
 
   obstacle1_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14],
                       [5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
+
+  obstacle2_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14]]
+
+  for ordered_pair in current_obstacle_location:
+    obstacle_active[current_obstacle_location.index(ordered_pair)] = True
+
+  if current_obstacle == 1:
+    current_obstacle_location = obstacle2_location
+    current_obstacle = 2
+  elif current_obstacle == 2:
+    current_obstacle_location = obstacle1_location
+    current_obstacle = 1
 
 def refresh_playing_field():
   refresh_playing_field_variables()
@@ -215,12 +233,22 @@ def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_b
   return player_one_score, player_two_score, p1_bullet_active, p2_bullet_active
 
 def update_playing_field():
+  ### Clear stuff ##
   # clear everything except for top and bottom sides (the bullets dont touch them)
   for x in range(len(playing_field)):
     for y in range(len(playing_field[0])):
       if playing_field[x][y] == "1" or playing_field[x][y] == "2" or playing_field[x][y] == "o" or playing_field[x][y] == "0": 
         playing_field[x][y] = " "
     print ""
+
+  ### Print stuff ###
+  # print left endzone
+  for x in range(len(playing_field)):
+    playing_field[x][0] = '|'
+
+  # print right endzone
+  for x in range(len(playing_field)):
+    playing_field[x][len(playing_field[0])-1] = '|'
 
   # print players
   playing_field[player_one_y_location][player_one_x_location] = '1'
@@ -246,22 +274,13 @@ def update_playing_field():
   playing_field[p2_bullet_y_location[5]][p2_bullet_x_location[5]] = 'o'
 
   # print obstacles
-  for ordered_pair in obstacle1_location:
+  for ordered_pair in current_obstacle_location:
     x = ordered_pair[0]
     y = ordered_pair[1]
-    if obstacle1_active[obstacle1_location.index(ordered_pair)] == True:
+    if obstacle_active[current_obstacle_location.index(ordered_pair)] == True:
       playing_field[x][y] = '0'
     else:
       playing_field[x][y] = ' '
-
-
-  # print left endzone
-  for x in range(len(playing_field)):
-    playing_field[x][0] = '|'
-
-  # print right endzone
-  for x in range(len(playing_field)):
-    playing_field[x][len(playing_field[0])-1] = '|'
 
 # ------------- Menus -----------------
 
