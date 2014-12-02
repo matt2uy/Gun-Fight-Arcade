@@ -49,9 +49,9 @@ p2_bullet_direction = ["none", "none", "none", "none", "none", "none"]
 p2_bullet_active = [False, False, False, False, False, False]
 
 # obstacles
-obstacle1_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14],
-                      [5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
-obstacle2_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14]]
+obstacle1_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+                      [5, 16], [6, 16], [7, 16], [8, 16], [9, 16]]
+obstacle2_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
 
 current_obstacle = 1
 
@@ -72,11 +72,11 @@ def move_player(player, direction, player_x_location, player_y_location):
       player_y_location-=1
 
   elif direction == "down":
-    if player_y_location != len(playing_field)-2:
+    if player_y_location != len(playing_field)-3:
       player_y_location+=1
 
   elif direction == "left":
-    if player == 2 and player_x_location > (len(playing_field[0])/2)+6: 
+    if player == 2 and player_x_location > (len(playing_field[0])/2)+7: 
       if player_x_location != 1:
         player_x_location-=1
     elif player == 1:
@@ -84,7 +84,7 @@ def move_player(player, direction, player_x_location, player_y_location):
         player_x_location-=1
 
   elif direction == "right":
-    if player == 1 and player_x_location < (len(playing_field[0])/2)-7:
+    if player == 1 and player_x_location < (len(playing_field[0])/2)-8:
       if player_x_location != len(playing_field[0])-2:
         player_x_location+=1
     elif player == 2:
@@ -193,10 +193,10 @@ def refresh_playing_field_variables():
   p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
   p2_bullet_active = [False, False, False, False, False, False]
 
-  obstacle1_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14],
-                      [5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
+  obstacle1_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+                      [5, 16], [6, 16], [7, 16], [8, 16], [9, 16]]
 
-  obstacle2_location = [[5, 14], [6, 14], [7, 14], [8, 14], [9, 14]]
+  obstacle2_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
 
   for ordered_pair in current_obstacle_location:
     obstacle_active[current_obstacle_location.index(ordered_pair)] = True
@@ -222,13 +222,43 @@ def refresh_game():
   refresh_playing_field();
 
 def check_for_hit(player_one_score, player_two_score, p1_bullet_x_location, p1_bullet_y_location, p2_bullet_x_location, p2_bullet_y_location, p1_bullet_active, p2_bullet_active):
+  playing_field[player_one_y_location][player_one_x_location] = '1'
+  playing_field[player_one_y_location+1][player_one_x_location+1] = '1'
+  playing_field[player_one_y_location+1][player_one_x_location] = '1'
+  playing_field[player_one_y_location][player_one_x_location+1] = '1'
+
+  playing_field[player_two_y_location][player_two_x_location] = '2'
+  playing_field[player_two_y_location+1][player_two_x_location-1] = '2'
+  playing_field[player_two_y_location+1][player_two_x_location] = '2'
+  playing_field[player_two_y_location][player_two_x_location-1] = '2'
+
+  # bullet hits player two
   if player_two_x_location == p1_bullet_x_location and player_two_y_location == p1_bullet_y_location and p1_bullet_active == True:
     player_one_score += 1
     p1_bullet_active = False
+  elif player_two_x_location-1 == p1_bullet_x_location and player_two_y_location+1 == p1_bullet_y_location and p1_bullet_active == True:
+    player_one_score += 1
+    p1_bullet_active = False
+  elif player_two_x_location == p1_bullet_x_location and player_two_y_location+1 == p1_bullet_y_location and p1_bullet_active == True:
+    player_one_score += 1
+    p1_bullet_active = False
+  elif player_two_x_location-1 == p1_bullet_x_location and player_two_y_location == p1_bullet_y_location and p1_bullet_active == True:
+    player_one_score += 1
+    p1_bullet_active = False
 
+  # bullet hits player one
   if player_one_x_location == p2_bullet_x_location and player_one_y_location == p2_bullet_y_location and p2_bullet_active == True:
-        player_two_score += 1
-        p2_bullet_active = False
+    player_two_score += 1
+    p2_bullet_active = False
+  elif player_one_x_location+1 == p2_bullet_x_location and player_one_y_location+1 == p2_bullet_y_location and p2_bullet_active == True:
+    player_two_score += 1
+    p2_bullet_active = False
+  elif player_one_x_location == p2_bullet_x_location and player_one_y_location+1 == p2_bullet_y_location and p2_bullet_active == True:
+    player_two_score += 1
+    p2_bullet_active = False
+  elif player_one_x_location+1 == p2_bullet_x_location and player_one_y_location == p2_bullet_y_location and p2_bullet_active == True:
+    player_two_score += 1
+    p2_bullet_active = False
 
   return player_one_score, player_two_score, p1_bullet_active, p2_bullet_active
 
@@ -252,7 +282,15 @@ def update_playing_field():
 
   # print players
   playing_field[player_one_y_location][player_one_x_location] = '1'
+  playing_field[player_one_y_location+1][player_one_x_location+1] = '1'
+  playing_field[player_one_y_location+1][player_one_x_location] = '1'
+  playing_field[player_one_y_location][player_one_x_location+1] = '1'
+
   playing_field[player_two_y_location][player_two_x_location] = '2'
+  playing_field[player_two_y_location+1][player_two_x_location-1] = '2'
+  playing_field[player_two_y_location+1][player_two_x_location] = '2'
+  playing_field[player_two_y_location][player_two_x_location-1] = '2'
+
 
   # print 6 bullets per person * 2
   playing_field[p1_bullet_y_location[0]][p1_bullet_x_location[0]] = 'o'
