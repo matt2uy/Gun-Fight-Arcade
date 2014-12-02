@@ -49,9 +49,24 @@ p2_bullet_direction = ["none", "none", "none", "none", "none", "none"]
 p2_bullet_active = [False, False, False, False, False, False]
 
 # obstacles
-obstacle1_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+
+obstacle1_location = [[5, 15], [6, 15], [8, 15], [9, 15]]
+
+obstacle2_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
                       [5, 16], [6, 16], [7, 16], [8, 16], [9, 16]]
-obstacle2_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
+
+obstacle3_location = [[5, 14], [9, 14],
+                      [5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+                      [5, 16], [9, 16]]
+
+obstacle4_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+                      [5, 17], [6, 17], [7, 17], [8, 17], [9, 17]]
+
+obstacle5_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+                      [5, 16], [6, 16], [7, 16], [8, 16], [9, 16],
+                      [5, 17], [6, 17], [7, 17], [8, 17], [9, 17]]
+
+
 
 current_obstacle = 1
 
@@ -193,20 +208,24 @@ def refresh_playing_field_variables():
   p2_bullet_direction = ["Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up", "Left-Up"]
   p2_bullet_active = [False, False, False, False, False, False]
 
-  obstacle1_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
-                      [5, 16], [6, 16], [7, 16], [8, 16], [9, 16]]
-
-  obstacle2_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
-
   for ordered_pair in current_obstacle_location:
     obstacle_active[current_obstacle_location.index(ordered_pair)] = True
 
   if current_obstacle == 1:
-    current_obstacle_location = obstacle2_location
+    current_obstacle_location = obstacle1_location
     current_obstacle = 2
   elif current_obstacle == 2:
-    current_obstacle_location = obstacle1_location
-    current_obstacle = 1
+    current_obstacle_location = obstacle2_location
+    current_obstacle = 3
+  elif current_obstacle == 3:
+    current_obstacle_location = obstacle3_location
+    current_obstacle = 4
+  elif current_obstacle == 4:
+    current_obstacle_location = obstacle4_location
+    current_obstacle = 5
+  elif current_obstacle == 5:
+    current_obstacle_location = obstacle5_location
+    current_obstacle = 5
 
 def refresh_playing_field():
   refresh_playing_field_variables()
