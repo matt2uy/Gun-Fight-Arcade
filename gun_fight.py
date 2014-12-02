@@ -1,3 +1,5 @@
+# last todo: Fix print issue with invisible bullets  when they go through the obstacles
+
 import termios, fcntl, sys, os, time, tty
 from termios import tcflush, TCIOFLUSH
 
@@ -67,8 +69,8 @@ obstacle5_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
                       [5, 17], [6, 17], [7, 17], [8, 17], [9, 17]]
 
 
-
 current_obstacle = 1
+obstacle_move_limit = 4
 
 current_obstacle_location = obstacle1_location
 
@@ -80,6 +82,36 @@ obstacle_active = [False, False, False, False, False, False, False, False, False
 
 for ordered_pair in current_obstacle_location:
   obstacle_active[current_obstacle_location.index(ordered_pair)] = True
+
+def move_obstacle():
+  global obstacle_move_limit
+
+  # move everything up/down
+  if obstacle_move_limit < 1:
+    for ordered_pair in current_obstacle_location:
+      #obstacle_active[current_obstacle_location.index(ordered_pair)] = False
+
+      current_obstacle_location[current_obstacle_location.index(ordered_pair)][0]+=1
+
+      '''
+      if obstacle_active[current_obstacle_location.index(ordered_pair)] == True:
+        obstacle_active[current_obstacle_location.index(ordered_pair)] = True
+      else: obstacle_active[current_obstacle_location.index(ordered_pair)] = False
+      '''
+      obstacle_move_limit = 4
+  else:
+    for ordered_pair in current_obstacle_location:
+      #obstacle_active[current_obstacle_location.index(ordered_pair)] = False
+
+      current_obstacle_location[current_obstacle_location.index(ordered_pair)][0]-=1
+
+      '''
+      if obstacle_active[current_obstacle_location.index(ordered_pair)] == True:
+        obstacle_active[current_obstacle_location.index(ordered_pair)] = True
+      else: obstacle_active[current_obstacle_location.index(ordered_pair)] = False
+      '''
+      obstacle_move_limit-=1
+
 
 def move_player(player, direction, player_x_location, player_y_location):
   if direction == "up":
@@ -661,6 +693,7 @@ def game_loop():
       # new way to keep time synced with refresh rate
       if second_interval > 1.18:
         game_time_left -= 1
+        move_obstacle()
         second_interval = 0
 
       # check if time ran out
