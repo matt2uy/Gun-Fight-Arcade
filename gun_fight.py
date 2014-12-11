@@ -50,7 +50,7 @@ p2_bullet_active = [False, False, False, False, False, False]
 
 # obstacles
 
-obstacle1_location = [[5, 15], [6, 15], [8, 15], [9, 15]]
+obstacle1_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15]]
 
 obstacle2_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
                       [5, 16], [6, 16], [7, 16], [8, 16], [9, 16]]
@@ -59,15 +59,16 @@ obstacle3_location = [[5, 14], [9, 14],
                       [5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
                       [5, 16], [9, 16]]
 
-obstacle4_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
-                      [5, 17], [6, 17], [7, 17], [8, 17], [9, 17]]
+obstacle4_location = [[5, 15], [6, 15], [8, 15], [9, 15],
+                      [5, 16], [6, 16], [8, 16], [9, 16],
+                      [5, 17], [6, 17], [8, 17], [9, 15]]
 
 obstacle5_location = [[5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
                       [5, 16], [6, 16], [7, 16], [8, 16], [9, 16],
                       [5, 17], [6, 17], [7, 17], [8, 17], [9, 17]]
 
 
-current_obstacle = 1
+current_obstacle = 2
 obstacle_move_limit = 4
 
 current_obstacle_location = obstacle1_location
