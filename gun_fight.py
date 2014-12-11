@@ -1,5 +1,3 @@
-# last todo: Fix print issue with invisible bullets  when they go through the obstacles
-
 import termios, fcntl, sys, os, time, tty
 from termios import tcflush, TCIOFLUSH
 
@@ -82,6 +80,7 @@ obstacle_active = [False, False, False, False, False, False, False, False, False
 
 for ordered_pair in current_obstacle_location:
   obstacle_active[current_obstacle_location.index(ordered_pair)] = True
+
 
 def move_obstacle():
   global obstacle_move_limit
@@ -693,7 +692,7 @@ def game_loop():
       # new way to keep time synced with refresh rate
       if second_interval > 1.18:
         game_time_left -= 1
-        move_obstacle()
+        #move_obstacle() # move obstacle once per sencond (it's buggy though, so I commented it out)
         second_interval = 0
 
       # check if time ran out
